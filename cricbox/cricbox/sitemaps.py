@@ -13,19 +13,8 @@ class StaticViewSitemap(sitemaps.Sitemap):
             "site-about",
             "site-history",
             "site-links",
-            "site-positions",
-            "site-performers",
             "site-handbook",
             "site-match_manager",
-            "site-stats",
-            "batsmen-stats",
-            "bowling-stats-all",
-            "match-appearances-player",
-            "fixtures-overview",
-            "season-overview",
-            "opposition-overview",
-            "venues-overview",
-            "players",
         ]
 
     def location(self, item):

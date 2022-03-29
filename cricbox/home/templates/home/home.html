@@ -12,16 +12,16 @@
                         <p>
                             We're a community cricket club based in <a href="{{ LONDON_FIELDS_MAP_URL }}"> Hackney,
                             North East London</a>
-                            We're members of the <a href="{{ NELCL_URL }}"> North East London Cricket League</a>.
+                            We are members of the <a href="{{ NELCL_URL }}"> North East London Cricket League</a> and also play a large amount of friendlies across the summer months. We predominantly play our cricket in the Hackney borough.
                         </p>
                         <p>We are always on the lookout for new talent, so if you are interested in any form of cricket,
                             please free to connect with us via the club email available in the <a
                                     href="{% url 'site-about' %}">About</a> page.</p>
-                        <p>We're often to be found in <a href="{{ PUB_ON_THE_PARK_URL }}">Pub On The Park</a> near the
-                            London Fields cricket ground.</p>
-                        <iframe width="600" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-                        src="https://www.openstreetmap.org/export/embed.html?bbox=-0.06769895553588869%2C51.534790911189106%2C-0.05323648452758789%2C51.5463350479341&amp;layer=mapnik&amp;marker=51.54056334560814%2C-0.06046772003173828" 
-                        style="border: 1px solid black"></iframe><br/><small><a href="https://www.openstreetmap.org/?mlat=51.5406&amp;mlon=-0.0605#map=16/51.5406/-0.0605">View Larger Map</a></small>                    </div>
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="https://www.openstreetmap.org/export/embed.html?bbox=-0.06769895553588869%2C51.534790911189106%2C-0.05323648452758789%2C51.5463350479341&amp;layer=mapnik&amp;marker=51.54056334560814%2C-0.06046772003173828" 
+                            style="border: 1px solid black"></iframe><br/><small><a href="https://www.openstreetmap.org/?mlat=51.5406&amp;mlon=-0.0605#map=16/51.5406/-0.0605">View Larger Map</a></small>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left">
                     <img src="{% static 'img/../../static/assets/img/club_pitch.jpg' %}" class="img-fluid" alt="">

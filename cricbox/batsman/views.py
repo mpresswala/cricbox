@@ -16,7 +16,7 @@ class BatsmanFilter(django_filters.FilterSet):
     class Meta:
         model = Batsman
         fields = {
-            "match_statistics__match__season": ["exact"],
+            "match_statistics__match__season": ["icontains"],
             "match_statistics__match__mtype": ["exact"],
             "how_out": ["exact"],
             "runs": ["gte"],
@@ -24,7 +24,7 @@ class BatsmanFilter(django_filters.FilterSet):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.filters["match_statistics__match__season"].label = "Season"
+        self.filters["match_statistics__match__season__icontains"].label = "Year"
         self.filters["match_statistics__match__mtype"].label = "Type"
         self.filters["how_out"].label = "Wickets"
         self.filters["runs__gte"].label = "Runs"
@@ -34,9 +34,10 @@ class BatsmenFilter(MatchFilter):
     class Meta:
         model = Batsman
         fields = {
-            "match_statistics__match__season": ["exact"],
+            "match_statistics__match__season": ["icontains"],
             "match_statistics__match__mtype": ["exact"],
             "player__first_name": ["icontains"],
+            # "stat_objects__innings": ["gt"]
         }
 
     def __init__(self, **kwargs):

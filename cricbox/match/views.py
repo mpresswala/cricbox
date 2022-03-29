@@ -20,21 +20,21 @@ class AppearancesFilter(django_filters.FilterSet):
     class Meta:
         model = Match
         fields = {
-            "season": ["exact"],
+            "season": ["icontains"],
             "mtype": ["exact"],
             "home_or_away": ["exact"],
-            "opposition": ["exact"],
-            "venue": ["exact"],
+            "opposition__name": ["icontains"],
+            "venue__name": ["icontains"],
             "players__first_name": ["icontains"],
         }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.filters["season"].label = "Season"
+        self.filters["season__icontains"].label = "Year"
         self.filters["mtype"].label = "Type"
         self.filters["home_or_away"].label = "Home/Away"
-        self.filters["opposition"].label = "Opposition"
-        self.filters["venue"].label = "Venue"
+        self.filters["opposition__name__icontains"].label = "Opposition"
+        self.filters["venue__name__icontains"].label = "Venue"
         self.filters["players__first_name__icontains"].label = "Player"
 
 
@@ -44,17 +44,18 @@ class FixturesFilter(django_filters.FilterSet):
         fields = {
             "mtype": ["exact"],
             "home_or_away": ["exact"],
-            "opposition": ["exact"],
-            "venue": ["exact"],
-            "season": ["exact"],
+            "opposition__name": ["icontains"],
+            "venue__name": ["icontains"],
+            "season": ["icontains"],
         }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.filters["season__icontains"].label = "Year"
         self.filters["mtype"].label = "Type"
         self.filters["home_or_away"].label = "Home/Away"
-        self.filters["opposition"].label = "Opposition"
-        self.filters["venue"].label = "Venue"
+        self.filters["opposition__name__icontains"].label = "Opposition"
+        self.filters["venue__name__icontains"].label = "Venue"
 
 
 class AppearancesView(SingleTableMixin, FilterView):

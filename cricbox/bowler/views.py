@@ -15,7 +15,7 @@ class BowlerFilter(django_filters.FilterSet):
     class Meta:
         model = Bowler
         fields = {
-            "match_statistics__match__season": ["exact"],
+            "match_statistics__match__season": ["icontains"],
             "match_statistics__match__mtype": ["exact"],
             "wickets": ["gte"],
             "runs": ["gte"],
@@ -23,7 +23,7 @@ class BowlerFilter(django_filters.FilterSet):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.filters["match_statistics__match__season"].label = "Season"
+        self.filters["match_statistics__match__season__icontains"].label = "Year"
         self.filters["match_statistics__match__mtype"].label = "Type"
         self.filters["wickets__gte"].label = "Wickets"
         self.filters["runs__gte"].label = "Runs"
@@ -33,7 +33,7 @@ class BowlersFilter(MatchFilter):
     class Meta:
         model = Bowler
         fields = {
-            "match_statistics__match__season": ["exact"],
+            "match_statistics__match__season": ["icontains"],
             "match_statistics__match__mtype": ["exact"],
             "player__first_name": ["icontains"],
         }

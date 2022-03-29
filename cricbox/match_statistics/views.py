@@ -28,14 +28,14 @@ class OppositionFilter(django_filters.FilterSet):
         fields = {
             "match__mtype": ["exact"],
             "match__home_or_away": ["exact"],
-            "match__venue": ["exact"],
+            "match__venue__name": ["icontains"],
         }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.filters["match__mtype"].label = "Type"
         self.filters["match__home_or_away"].label = "Home/Away"
-        self.filters["match__venue"].label = "Venue"
+        self.filters["match__venue__name__icontains"].label = "Venue"
 
 
 class VenueFilter(django_filters.FilterSet):
@@ -47,14 +47,14 @@ class VenueFilter(django_filters.FilterSet):
         fields = {
             "match__mtype": ["exact"],
             "match__home_or_away": ["exact"],
-            "match__opposition": ["exact"],
+            "match__opposition__name": ["icontains"],
         }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.filters["match__mtype"].label = "Type"
         self.filters["match__home_or_away"].label = "Home/Away"
-        self.filters["match__opposition"].label = "Opposition"
+        self.filters["match__opposition__name__icontains"].label = "Opposition"
 
 
 class SeasonFilter(django_filters.FilterSet):
@@ -63,16 +63,16 @@ class SeasonFilter(django_filters.FilterSet):
         fields = {
             "match__mtype": ["exact"],
             "match__home_or_away": ["exact"],
-            "match__opposition": ["exact"],
-            "match__venue": ["exact"],
+            "match__opposition__name": ["icontains"],
+            "match__venue__name": ["icontains"],
         }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.filters["match__mtype"].label = "Type"
         self.filters["match__home_or_away"].label = "Home/Away"
-        self.filters["match__opposition"].label = "Opposition"
-        self.filters["match__venue"].label = "Venue"
+        self.filters["match__opposition__name__icontains"].label = "Opposition"
+        self.filters["match__venue__name__icontains"].label = "Venue"
 
 
 class SeasonView(SingleTableMixin, FilterView):
