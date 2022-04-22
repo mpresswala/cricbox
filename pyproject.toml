@@ -13,7 +13,7 @@ license = "GPL-3.0-or-later"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-Django = "^3.1.5"
+Django = "^3.2.13"
 django-tables2 = "^2.3.4"
 django-filter = "^2.4.0"
 django-forms-bootstrap = "^3.1.0"
