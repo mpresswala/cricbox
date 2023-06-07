@@ -29,7 +29,7 @@ class Statistics(models.Manager):
                 player_full_name=Concat("player__first_name", Value(" "), "player__last_name"),
             )
             .annotate(
-                innings=Count("match_statistics"),
+                innings=Count("match_statistics") - Count("how_out", filter=Q(how_out__name="Did Not Bat")) - Count("how_out", filter=Q(how_out__name="Unknown")) ,
                 runs_scored=Sum("runs"),
                 not_out=Count("how_out", filter=Q(how_out__name="Not Out")),
                 highest=Max("runs"),
