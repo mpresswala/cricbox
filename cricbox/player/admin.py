@@ -36,9 +36,10 @@ class PlayerAdmin(admin.ModelAdmin):
         "playing_role",
         "batting_style",
         "bowling_style",
+        "life_member"
     ]
     search_fields = ["first_name", "last_name"]
-    list_filter = ["playing_role", "batting_style", "bowling_style"]
+    list_filter = ["playing_role", "batting_style", "bowling_style", "life_member"]
 
 
 class AppointmentAdmin(admin.ModelAdmin):

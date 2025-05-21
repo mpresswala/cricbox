@@ -54,6 +54,7 @@ class Player(models.Model):
     batting_style = models.ForeignKey(BattingStyle, on_delete=models.PROTECT, null=True, blank=True)
     bowling_style = models.ForeignKey(BowlingStyle, on_delete=models.PROTECT, null=True, blank=True)
     active = models.BooleanField(blank=True, default=True)
+    life_member = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["last_name"]

@@ -144,8 +144,7 @@ class PositionsView(MultiTableMixin, TemplateView):
                 Appointment.objects.filter(appointment_type__name="International Tour Secretary").order_by("-season")
             ),
             VeteransTable(
-                Player.objects.filter(member_since__year=datetime.datetime.now().year - 10),
-                order_by="-member_since__year",
+                Player.objects.filter(life_member=True).order_by("-member_since__year"),
             ),
         ]
 
