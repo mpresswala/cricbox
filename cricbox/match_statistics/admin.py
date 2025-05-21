@@ -28,7 +28,7 @@ class MatchStatisticsAdmin(admin.ModelAdmin):
     list_filter = ["match__date", "match__mtype", "match__home_or_away", "result"]
     date_hierarchy = "match__date"
     inlines = (BatsmanAdmin, BowlerAdmin)
-    autocomplete_fields = ["batsman__player", "bowler__player"]
+    # autocomplete_fields = ["batsman__player", "bowler__player"]
 
     def date(self, x):
         return x.match.date

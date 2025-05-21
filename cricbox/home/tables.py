@@ -2,12 +2,9 @@
 from cricbox.settings import MEDIA_URL
 from cricbox.utils import TABLE_ATTRS
 
-# Django imports
-from django.utils.html import format_html
-
 # Django third party apps
 import django_tables2 as tables
-
+from player.models import Player
 
 class Scorecard(tables.Table):
     name = tables.Column(orderable=False)
@@ -40,14 +37,13 @@ class NotablePerformancesTable(tables.Table):
 
 
 class VeteransTable(tables.Table):
-    first_name = tables.Column(verbose_name="Veteran", linkify=("player-profile", [tables.A("id")]))
-    member_since = tables.Column(verbose_name="Since")
-
-    def render_first_name(self, value, record):
-        return f"{value} {record.last_name}"
+    full_name = tables.Column(linkify=("player-profile", [tables.A("id")]), verbose_name="Player Name")
+    member_since = tables.Column(accessor="member_since", verbose_name="Member Since")
 
     class Meta:
-        attrs = TABLE_ATTRS
+        model = Player  # Associate the table with the Player model
+        fields = ("full_name", "member_since")  # Specify only the fields you want to display
+        attrs = TABLE_ATTRS  # Use your existing table attributes if needed
 
 
 class BestPlayer(tables.Table):
