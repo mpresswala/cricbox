@@ -59,24 +59,30 @@ class Bowler(models.Model):
     def average(self):
         """
         Returns the bowler's average per match.
-        :return: float
+        :return: float or None when no wickets were taken
         """
+        if not self.wickets:
+            return None
         return round(self.runs / self.wickets, 2)
 
     @property
     def strike_rate(self):
         """
         Returns the bowler's strike rate per match.
-        :return: float
+        :return: float or None when no wickets were taken
         """
+        if not self.wickets:
+            return None
         return round(self.overs * 6 / self.wickets, 2)
 
     @property
     def economy(self):
         """
         Returns the bowler's economy rate per match.
-        :return: float
+        :return: float or None when no overs were bowled
         """
+        if not self.overs:
+            return None
         return round(self.runs / self.overs, 2)
 
     def __str__(self):

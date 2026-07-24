@@ -57,8 +57,8 @@ class WicketType(models.Model):
 class Batsman(models.Model):
     player = models.ForeignKey(Player, on_delete=models.PROTECT)
     scoring = models.CharField("Scoring", blank=True, max_length=200)
-    runs = models.PositiveIntegerField("Runs", blank=True)
-    how_out = models.ForeignKey(WicketType, blank=True, on_delete=models.PROTECT)
+    runs = models.PositiveIntegerField("Runs")
+    how_out = models.ForeignKey(WicketType, on_delete=models.PROTECT)
     bowler = models.CharField("Bowler", blank=True, max_length=25)
 
     match_statistics = models.ForeignKey(MatchStatistics, on_delete=models.PROTECT)
