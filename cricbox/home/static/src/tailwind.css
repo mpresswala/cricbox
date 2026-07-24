@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+/* Scan Django templates for utility classes (relative to this file). */
+@source "../../../**/*.html";
+
+/*
+ * London Fields CC design tokens. Cricket-green primary with a dark "ink"
+ * neutral for headers/nav. Used across the reskinned public site.
+ */
+@theme {
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
+  --color-brand-950: #022c22;
+
+  --color-ink-50: #f8fafc;
+  --color-ink-100: #f1f5f9;
+  --color-ink-200: #e2e8f0;
+  --color-ink-300: #cbd5e1;
+  --color-ink-400: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-ink-600: #475569;
+  --color-ink-700: #334155;
+  --color-ink-800: #1e293b;
+  --color-ink-900: #0f172a;
+  --color-ink-950: #020617;
+
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Base element defaults. */
+@layer base {
+  body {
+    @apply bg-ink-50 text-ink-800 font-sans antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display font-semibold text-ink-900 tracking-tight;
+  }
+}
+
+/* Reusable component classes for the stats tables and layout chrome. */
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* django-tables2 renders <table class="table">; style it as a modern grid. */
+  .stats-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .stats-table thead th {
+    @apply sticky top-0 bg-ink-800 px-3 py-2.5 text-left font-semibold text-white whitespace-nowrap;
+  }
+  .stats-table tbody td {
+    @apply border-b border-ink-100 px-3 py-2.5 whitespace-nowrap;
+  }
+  .stats-table tbody tr:nth-child(even) {
+    @apply bg-white;
+  }
+  .stats-table tbody tr:nth-child(odd) {
+    @apply bg-ink-50;
+  }
+  .stats-table tbody tr:hover {
+    @apply bg-brand-50;
+  }
+  .stats-table a {
+    @apply font-medium text-brand-700 hover:text-brand-800 hover:underline;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-ink-200 bg-white px-4 py-2 text-sm font-semibold text-ink-700 transition hover:bg-ink-50;
+  }
+
+  .card {
+    @apply rounded-xl border border-ink-100 bg-white p-6 shadow-sm;
+  }
+
+  .field-label {
+    @apply mb-1 block text-sm font-medium text-ink-700;
+  }
+  .field-input {
+    @apply w-full rounded-lg border border-ink-300 bg-white px-3 py-2 text-sm text-ink-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500;
+  }
+
+  /* Generic styling for django-filter forms rendered field-by-field. */
+  .filter-form label {
+    @apply mb-1 block text-sm font-medium text-ink-700;
+  }
+  .filter-form input,
+  .filter-form select {
+    @apply w-full rounded-lg border border-ink-300 bg-white px-3 py-2 text-sm text-ink-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500;
+  }
+
+  /* Page header band shown at the top of each content page. */
+  .page-header {
+    @apply bg-ink-900 text-white;
+  }
+  .page-header h1 {
+    @apply text-white;
+  }
+
+  /* Long-form content pages (about, history, links, handbook…). */
+  .content-prose {
+    @apply space-y-4 leading-relaxed text-ink-700;
+  }
+  .content-prose h1 {
+    @apply mt-6 text-2xl font-bold text-ink-900;
+  }
+  .content-prose h2 {
+    @apply mt-6 text-xl font-bold text-ink-900;
+  }
+  .content-prose h3 {
+    @apply mt-4 text-lg font-semibold text-ink-900;
+  }
+  .content-prose h4 {
+    @apply mt-6 text-2xl font-bold text-ink-900;
+  }
+  .content-prose h5 {
+    @apply mt-4 text-lg font-semibold text-ink-900;
+  }
+  .content-prose a {
+    @apply font-medium text-brand-700 hover:underline;
+  }
+  .content-prose ul {
+    @apply list-disc space-y-1 pl-6 marker:text-brand-500;
+  }
+  .content-prose hr {
+    @apply my-6 border-ink-200;
+  }
+
+  /* Alpine-driven tabs (club positions, performers). */
+  .tab-btn {
+    @apply -mb-px cursor-pointer border-b-2 border-transparent px-4 py-2 text-sm font-medium text-ink-500 hover:text-ink-800;
+  }
+  .tab-btn-active {
+    @apply border-brand-600 text-brand-700;
+  }
+}

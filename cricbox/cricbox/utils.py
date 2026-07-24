@@ -12,7 +12,7 @@ INVALID_PLAYERS_MATCH = Q(
     Q(players__full_name="Extras") | Q(players__full_name=None) | Q(players__full_name="Unknown") | Q(players__id=None)
 )
 
-TABLE_ATTRS = {"class": "table table-hover", "thead": {"class": "thead-light"}}
+TABLE_ATTRS = {"class": "stats-table"}
 
 SITE_URLS = {
     "LONDON_FIELDS_MAP_URL": "https://osm.org/go/euu6cZFC?layers=N&way=4406359",

@@ -30,3 +30,29 @@ export DJANGO_DB_USERNAME=<db-username>
 export DJANGO_DB_PASSWORD=<db-password>
 export DJANGO_SENTRY_URL=<sentry-url>
 ```
+
+### Frontend (Tailwind CSS)
+
+The public site is styled with [Tailwind CSS](https://tailwindcss.com/) (built
+via the standalone CLI) plus [Alpine.js](https://alpinejs.dev/) and
+[HTMX](https://htmx.org/), served as static files. Node.js is only needed to
+rebuild the CSS — it is not required at runtime.
+
+```
+npm install                # once, to fetch the build tooling
+npm run build:css          # compile cricbox/home/static/css/tailwind.css
+npm run watch:css          # rebuild on template changes during development
+npm run vendor             # refresh the vendored alpine.min.js / htmx.min.js
+```
+
+Source styles live in `cricbox/home/static/src/tailwind.css`. After changing
+templates or styles, run `npm run build:css` and then `collectstatic` as usual.
+
+### Local development
+
+A SQLite-backed settings module is provided so the app can run without MySQL:
+
+```
+DJANGO_SETTINGS_MODULE=cricbox.settings_local python cricbox/manage.py migrate
+DJANGO_SETTINGS_MODULE=cricbox.settings_local python cricbox/manage.py runserver
+```

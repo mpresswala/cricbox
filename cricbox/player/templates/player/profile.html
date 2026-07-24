@@ -1,109 +1,44 @@
 {% extends "home/base.html" %}
+{% load django_tables2 %}
 {% block content %}
-    {% load django_tables2 %}
-    <section id="portfolio" class="portfolio">
-        <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                <h2>{{ player.full_name }}'s Career Summary</h2>
-                <div class="card-title"><h3>Player Information</h3></div>
-                <div class="col-md-8">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Club Joined</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ player.member_since }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Playing role</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ player.get_playing_role_display }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Batting Style</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ player.get_batting_style_display }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Bowling Style</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ player.get_bowling_style_display }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <h3>Batting Career</h3>
-                {% render_table batting %}
-                <h3>Bowling Career</h3>
-                {% render_table bowling %}
-                <div class="card-title"><h3>Career Information</h3></div>
-                <div class="col-md-8">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">League Debut</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ match_league | last }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Last League</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ match_league | first }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Friendly Debut</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ match_friendly | last }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Last Friendly</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ match_friendly | first }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">VPCCL Debut</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ match_vpccl | last }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Last VPCCL</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ match_vpccl | first }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">{{ player.full_name }}</h1>
+        <p class="mt-2 text-ink-300">Career Summary</p>
+    </div>
+</section>
+
+<div class="container-page space-y-10 py-8">
+    <div class="card">
+        <h3 class="mb-4 text-lg font-semibold">Player Information</h3>
+        <dl class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Club Joined</dt><dd class="font-medium">{{ player.member_since }}</dd></div>
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Playing Role</dt><dd class="font-medium">{{ player.get_playing_role_display }}</dd></div>
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Batting Style</dt><dd class="font-medium">{{ player.get_batting_style_display }}</dd></div>
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Bowling Style</dt><dd class="font-medium">{{ player.get_bowling_style_display }}</dd></div>
+        </dl>
+    </div>
+
+    <div>
+        <h3 class="mb-4 text-lg font-semibold">Batting Career</h3>
+        {% render_table batting %}
+    </div>
+
+    <div>
+        <h3 class="mb-4 text-lg font-semibold">Bowling Career</h3>
+        {% render_table bowling %}
+    </div>
+
+    <div class="card">
+        <h3 class="mb-4 text-lg font-semibold">Career Information</h3>
+        <dl class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">League Debut</dt><dd class="font-medium">{{ match_league | last }}</dd></div>
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last League</dt><dd class="font-medium">{{ match_league | first }}</dd></div>
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Friendly Debut</dt><dd class="font-medium">{{ match_friendly | last }}</dd></div>
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last Friendly</dt><dd class="font-medium">{{ match_friendly | first }}</dd></div>
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">VPCCL Debut</dt><dd class="font-medium">{{ match_vpccl | last }}</dd></div>
+            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last VPCCL</dt><dd class="font-medium">{{ match_vpccl | first }}</dd></div>
+        </dl>
+    </div>
+</div>
 {% endblock %}

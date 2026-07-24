@@ -159,3 +159,6 @@ static/vendor/
 
 # Local data dumps (contain real member data)
 *.sql
+
+# Node / Tailwind build
+node_modules/

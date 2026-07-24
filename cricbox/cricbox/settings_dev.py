@@ -143,7 +143,7 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+DJANGO_TABLES2_TEMPLATE = "django_tables2/tailwind.html"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 

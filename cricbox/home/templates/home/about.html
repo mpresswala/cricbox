@@ -1,23 +1,20 @@
 {% extends "home/base.html" %}
 {% block content %}
-    <section id="about" class="about">
-        <div class="container">
-            <p>London Fields CC is a community-focused cricket club which draws its membership from the local community in and around Hackney and East London.</p>
-            <p>We play most Saturdays and Sundays throughout the summer: On Saturdays we compete in the <a
-                    href="{{ NELCL_URL }}">North East London Cricket League</a>. On Sundays we play friendly matches across the borough of Hackney.</p>
-            <p>Saturday League matches are 40 overs a side, with up to 8 overs per bowler.  In friendlies we tend to play 35 overs.</p>
-           <p>We tour twice a year; once domestically and once overseas. On our travels we have played in Estonia, Bulgaria, Croatia and Hungary, as well as Belgium and Slovenia. Each trip has brought back many sore heads, silly stories (many of which can never be published on a website) and even a team mascot.</p>
-            <p></p>
-            <p>We are a casual club that values friendship and team spirit over winning (although we are rather proud of our record in the North East London Cricket League) and like to share a drink (soft or hard) or two after our games. This is often done on the outfield or in one of Hackney's many local pubs. </p>
-            <p></p>
-            <p>Our home pitch on London Fields has hosted cricket for over 200 years. Thanks to Hackney Council and their staff the pitch gets better and better to play on each year. It is unique in Hackney for its setting (surrounded by London Plane trees on the boundary) and the number of people watching the game at any time.</p>
-            <p></p>
-            <p>If you ever fancy <a href="{{ LONDON_FIELDS_MAP_URL }}">popping down</a> to watch a match, games usually
-                start around 1pm.</p>
-            <p></p>
-            <p></p>
-            <p>You can contact us <a href="http://farm3.static.flickr.com/2447/3745670629_ba67f65fe6.jpg?v=0">HERE</a>
-            </p>
-        </div>
-    </section><!-- End About Section -->
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">About the Club</h1>
+    </div>
+</section>
+
+<div class="container-page py-8">
+    <div class="content-prose max-w-3xl">
+        <p>London Fields CC is a community-focused cricket club which draws its membership from the local community in and around Hackney and East London.</p>
+        <p>We play most Saturdays and Sundays throughout the summer. On Saturdays we compete in the <a href="{{ NELCL_URL }}">North East London Cricket League</a>. On Sundays we play friendly matches across the borough of Hackney.</p>
+        <p>Saturday League matches are 40 overs a side, with up to 8 overs per bowler. In friendlies we tend to play 35 overs.</p>
+        <p>We tour twice a year; once domestically and once overseas. On our travels we have played in Estonia, Bulgaria, Croatia and Hungary, as well as Belgium and Slovenia. Each trip has brought back many sore heads, silly stories (many of which can never be published on a website) and even a team mascot.</p>
+        <p>We are a casual club that values friendship and team spirit over winning (although we are rather proud of our record in the North East London Cricket League) and like to share a drink (soft or hard) or two after our games. This is often done on the outfield or in one of Hackney's many local pubs.</p>
+        <p>Our home pitch on London Fields has hosted cricket for over 200 years. Thanks to Hackney Council and their staff the pitch gets better and better to play on each year. It is unique in Hackney for its setting (surrounded by London Plane trees on the boundary) and the number of people watching the game at any time.</p>
+        <p>If you ever fancy <a href="{{ LONDON_FIELDS_MAP_URL }}">popping down</a> to watch a match, games usually start around 1pm.</p>
+    </div>
+</div>
 {% endblock content %}

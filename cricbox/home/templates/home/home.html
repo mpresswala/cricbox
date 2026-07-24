@@ -1,32 +1,49 @@
 {% extends "home/base.html" %}
 {% load static %}
 {% block content %}
-    <!-- ======= Hero Section ======= -->
-    <section id="hero" style="padding: 60px;">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 pt-5 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-start"
-                     data-aos="fade-up">
-                    <div>
-                        <h1>Welcome to the Internet home of London Fields Cricket Club.</h1>
-                        <p>
-                            We're a community cricket club based in <a href="{{ LONDON_FIELDS_MAP_URL }}"> Hackney,
-                            North East London</a>
-                            We are members of the <a href="{{ NELCL_URL }}"> North East London Cricket League</a> and also play a large amount of friendlies across the summer months. We predominantly play our cricket in the Hackney borough.
-                        </p>
-                        <p>We are always on the lookout for new talent, so if you are interested in any form of cricket,
-                            please free to connect with us via the club email available in the <a
-                                    href="{% url 'site-about' %}">About</a> page.</p>
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item" src="https://www.openstreetmap.org/export/embed.html?bbox=-0.06769895553588869%2C51.534790911189106%2C-0.05323648452758789%2C51.5463350479341&amp;layer=mapnik&amp;marker=51.54056334560814%2C-0.06046772003173828" 
-                            style="border: 1px solid black"></iframe><br/><small><a href="https://www.openstreetmap.org/?mlat=51.5406&amp;mlon=-0.0605#map=16/51.5406/-0.0605">View Larger Map</a></small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left">
-                    <img src="{% static 'img/../../static/assets/img/club_pitch.jpg' %}" class="img-fluid" alt="">
-                </div>
+<section class="relative isolate overflow-hidden bg-ink-900 text-white">
+    <img src="{% static 'assets/img/club_pitch.jpg' %}" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-25">
+    <div class="container-page py-20 sm:py-28">
+        <div class="max-w-2xl">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Welcome to London Fields Cricket Club</h1>
+            <p class="mt-6 text-lg leading-relaxed text-ink-200">
+                A community cricket club based in
+                <a href="{{ LONDON_FIELDS_MAP_URL }}" class="font-medium text-brand-300 hover:underline">Hackney, North East London</a>.
+                We're members of the
+                <a href="{{ NELCL_URL }}" class="font-medium text-brand-300 hover:underline">North East London Cricket League</a>
+                and play friendlies across the summer throughout the borough.
+            </p>
+            <p class="mt-4 text-ink-300">
+                Always on the lookout for new talent — if you're interested in any form of cricket, get in touch via the club email on our
+                <a href="{% url 'site-about' %}" class="font-medium text-brand-300 hover:underline">About</a> page.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+                <a href="{% url 'fixtures-overview' %}" class="btn">View Fixtures</a>
+                <a href="{% url 'batsmen-stats' %}" class="btn-ghost !bg-transparent !text-white !border-white/30 hover:!bg-white/10">Club Stats</a>
             </div>
         </div>
-    </section><!-- End Hero -->
+    </div>
+</section>
+
+<div class="container-page py-12">
+    <div class="grid gap-6 sm:grid-cols-3">
+        <a href="{% url 'players' %}" class="card transition hover:shadow-md">
+            <h3 class="text-lg font-semibold">Players</h3>
+            <p class="mt-1 text-sm text-ink-500">Meet the squad and browse player profiles.</p>
+        </a>
+        <a href="{% url 'site-performers' %}" class="card transition hover:shadow-md">
+            <h3 class="text-lg font-semibold">Club Performers</h3>
+            <p class="mt-1 text-sm text-ink-500">Centuries, five-fers and record holders.</p>
+        </a>
+        <a href="{% url 'site-history' %}" class="card transition hover:shadow-md">
+            <h3 class="text-lg font-semibold">History</h3>
+            <p class="mt-1 text-sm text-ink-500">Over 200 years of cricket on London Fields.</p>
+        </a>
+    </div>
+
+    <div class="card mt-8 overflow-hidden p-0">
+        <iframe title="London Fields location" class="h-80 w-full border-0"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-0.06769895553588869%2C51.534790911189106%2C-0.05323648452758789%2C51.5463350479341&amp;layer=mapnik&amp;marker=51.54056334560814%2C-0.06046772003173828"></iframe>
+    </div>
+</div>
 {% endblock content %}

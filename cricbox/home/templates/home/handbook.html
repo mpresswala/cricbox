@@ -1,7 +1,13 @@
 {% extends "home/base.html" %}
 {% block content %}
-    <section id="about" class="about">
-        <div class="container">
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">Season Handbook</h1>
+    </div>
+</section>
+
+<div class="container-page py-8">
+    <div class="content-prose max-w-3xl">
             <h1>Welcome to the {{ YEAR }} Season</h1>
             <p>If you are returning for another season, great to have you back.</p>
             <p>If you are new to the club (and there are a lot of you this year) then you’ve made a life changing
@@ -264,6 +270,6 @@
                 comments, etc., then I am always available for communication and I would encourage you to get in
                 touch.</p>
             <p>Troy – 07786 393 710.</p>
-        </div>
-    </section><!-- End About Section -->
+    </div>
+</div>
 {% endblock content %}

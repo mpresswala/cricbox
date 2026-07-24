@@ -1,0 +1,19 @@
+{% comment %}Reusable Tailwind-styled django-filter form. Expects `filter` in context.{% endcomment %}
+{% if filter %}
+<form action="" method="get" class="filter-form card mb-6">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {% for field in filter.form %}
+        <div>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<p class="mt-1 text-xs text-ink-500">{{ field.help_text }}</p>{% endif %}
+            {% for error in field.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="mt-4 flex gap-2">
+        <button type="submit" class="btn">Filter</button>
+        <a href="{{ request.path }}" class="btn-ghost">Reset</a>
+    </div>
+</form>
+{% endif %}
