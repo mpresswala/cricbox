@@ -6,29 +6,31 @@ from .models import HomeAway, Match, MatchType, PlayerSkill
 # Django imports
 from django.contrib import admin
 
+# Third-party imports
+from unfold.admin import ModelAdmin, TabularInline
+
 
 # Register your models here.
-class MatchTypeAdmin(admin.ModelAdmin):
+class MatchTypeAdmin(ModelAdmin):
     pass
 
 
-class HomeAwayAdmin(admin.ModelAdmin):
+class HomeAwayAdmin(ModelAdmin):
     pass
 
 
-class PlayerSkillAdmin(admin.ModelAdmin):
+class PlayerSkillAdmin(ModelAdmin):
     pass
 
 
-class PlayerInlineAdmin(admin.TabularInline):
+class PlayerInlineAdmin(TabularInline):
     model = PlayerMatchAttribute
 
 
-class MatchAdmin(admin.ModelAdmin):
+class MatchAdmin(ModelAdmin):
     list_display = ("opposition", "date", "venue", "mtype")
     list_filter = ["date", "home_or_away", "mtype"]
     search_fields = ["opposition__name", "venue__name", "mtype"]
-    filter_horizontal = ("players",)
     inlines = (PlayerInlineAdmin,)
     date_hierarchy = "date"
 

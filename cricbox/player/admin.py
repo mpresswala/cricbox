@@ -10,25 +10,28 @@ from .models import (
 # Django imports
 from django.contrib import admin
 
+# Third-party imports
+from unfold.admin import ModelAdmin
+
 
 # Register your models here.
-class PlayingRoleAdmin(admin.ModelAdmin):
+class PlayingRoleAdmin(ModelAdmin):
     pass
 
 
-class BattingStyleAdmin(admin.ModelAdmin):
+class BattingStyleAdmin(ModelAdmin):
     pass
 
 
-class BowlingStyleAdmin(admin.ModelAdmin):
+class BowlingStyleAdmin(ModelAdmin):
     pass
 
 
-class AppointmentTypeAdmin(admin.ModelAdmin):
+class AppointmentTypeAdmin(ModelAdmin):
     pass
 
 
-class PlayerAdmin(admin.ModelAdmin):
+class PlayerAdmin(ModelAdmin):
     list_display = [
         "first_name",
         "last_name",
@@ -42,7 +45,7 @@ class PlayerAdmin(admin.ModelAdmin):
     list_filter = ["playing_role", "batting_style", "bowling_style", "life_member"]
 
 
-class AppointmentAdmin(admin.ModelAdmin):
+class AppointmentAdmin(ModelAdmin):
     list_display = ["name", "appointment_type", "season"]
     search_fields = ["name__full_name", "season"]
     list_filter = ["appointment_type"]

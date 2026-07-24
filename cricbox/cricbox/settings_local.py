@@ -28,6 +28,9 @@ INSTALLED_APPS = [
     "venue.apps.VenueConfig",
     "match.apps.MatchConfig",
     "opposition.apps.OppositionConfig",
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -103,3 +106,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# django-unfold admin theme
+from cricbox.unfold_config import UNFOLD  # noqa: E402,F401

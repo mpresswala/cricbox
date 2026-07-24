@@ -4,21 +4,24 @@ from home.models import ClubDocument, NewsItem, Picture, Podcast
 # Django imports
 from django.contrib import admin
 
+# Third-party imports
+from unfold.admin import ModelAdmin
+
 
 # Register your models here.
-class NewsAdmin(admin.ModelAdmin):
+class NewsAdmin(ModelAdmin):
     model = NewsItem
 
 
-class PodcastAdmin(admin.ModelAdmin):
+class PodcastAdmin(ModelAdmin):
     model = Podcast
 
 
-class PicturesAdmin(admin.ModelAdmin):
+class PicturesAdmin(ModelAdmin):
     model = Picture
 
 
-class DocumentsAdmin(admin.ModelAdmin):
+class DocumentsAdmin(ModelAdmin):
     model = ClubDocument
 
 

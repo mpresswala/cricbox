@@ -3,9 +3,12 @@ from .models import Opposition
 # Django imports
 from django.contrib import admin
 
+# Third-party imports
+from unfold.admin import ModelAdmin
+
 
 # Register your models here.
-class OppositionAdmin(admin.ModelAdmin):
+class OppositionAdmin(ModelAdmin):
     list_display = ["name", "site"]
     search_fields = ["name"]
 

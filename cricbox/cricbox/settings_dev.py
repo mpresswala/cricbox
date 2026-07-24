@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     "venue.apps.VenueConfig",
     "match.apps.MatchConfig",
     "opposition.apps.OppositionConfig",
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -143,3 +146,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# django-unfold admin theme
+from cricbox.unfold_config import UNFOLD  # noqa: E402,F401

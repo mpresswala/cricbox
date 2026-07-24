@@ -3,13 +3,16 @@ from .models import Batsman, WicketType
 # Django imports
 from django.contrib import admin
 
+# Third-party imports
+from unfold.admin import ModelAdmin
+
 
 # Register your models here.
-class WicketTypeAdmin(admin.ModelAdmin):
+class WicketTypeAdmin(ModelAdmin):
     pass
 
 
-class BatsmanAdmin(admin.ModelAdmin):
+class BatsmanAdmin(ModelAdmin):
     list_display = ("player", "how_out", "bowler", "runs", "match_statistics")
     list_filter = ["how_out"]
     search_fields = ["player__full_name", "bowler"]

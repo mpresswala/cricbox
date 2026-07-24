@@ -66,6 +66,9 @@ INSTALLED_APPS = [
     "venue.apps.VenueConfig",
     "match.apps.MatchConfig",
     "opposition.apps.OppositionConfig",
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -192,3 +195,6 @@ MEDIA_URL = "/media/"
 
 # setting the default primary key back to an integer after upgrading to django 3.2 (https://dev.to/rubyflewtoo/upgrading-to-django-3-2-and-fixing-defaultautofield-warnings-518n)
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# django-unfold admin theme
+from cricbox.unfold_config import UNFOLD  # noqa: E402,F401
