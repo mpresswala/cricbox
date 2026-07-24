@@ -156,3 +156,6 @@ static/img/lfcc_logo.png
 static/img/lfcc_logo_backup.gif
 static/vendor/
 .python-version
+
+# Local data dumps (contain real member data)
+*.sql
