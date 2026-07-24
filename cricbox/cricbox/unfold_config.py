@@ -4,6 +4,7 @@ Imported by the settings modules so the admin branding stays consistent
 across local, dev and production.
 """
 
+from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -14,6 +15,9 @@ UNFOLD = {
     "SITE_SYMBOL": "sports_cricket",
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
+    "STYLES": [
+        lambda request: static("css/admin_tabular.css"),
+    ],
     "COLORS": {
         "primary": {
             "50": "236 253 245",
