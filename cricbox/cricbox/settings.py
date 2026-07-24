@@ -74,7 +74,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_tables2",
     "django_filters",
-    "django_forms_bootstrap",
     "bootstrap4",
     "django.contrib.sitemaps",
     "django.contrib.sites",

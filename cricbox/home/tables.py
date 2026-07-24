@@ -1,5 +1,4 @@
 # Cricbox imports
-from cricbox.settings import MEDIA_URL
 from cricbox.utils import TABLE_ATTRS
 
 # Django third party apps

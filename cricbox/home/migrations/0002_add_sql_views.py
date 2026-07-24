@@ -3,38 +3,86 @@
 # Django imports
 from django.db import migrations
 
+# MySQL uses concat(a, ' ', b); SQLite uses string concatenation with ||.
+# The views are created after every migration that alters their underlying
+# tables (see dependencies below) so that SQLite's table-rebuild-on-ALTER
+# never runs while a dependent view exists.
+
+BOWLER_VIEW_MYSQL = """
+CREATE VIEW bowler_all_seasons AS
+    SELECT players.id, concat(players.first_name, ' ', players.last_name) as name, matches.season,
+    SUM(bowlers.wickets) as total
+    FROM bowlers
+    JOIN matches_statistics ON (bowlers.match_statistics_id = matches_statistics.id)
+    JOIN matches ON (matches_statistics.match_id = matches.id)
+    JOIN players ON (bowlers.player_id = players.id)
+    GROUP BY 1,2,3;
+"""
+
+BATSMEN_VIEW_MYSQL = """
+CREATE VIEW batsmen_all_seasons AS
+    SELECT players.id, concat(players.first_name, ' ', players.last_name) as name, matches.season,
+    SUM(batsmen.runs) as total
+    FROM batsmen
+    JOIN matches_statistics ON (batsmen.match_statistics_id = matches_statistics.id)
+    JOIN matches ON (matches_statistics.match_id = matches.id)
+    JOIN players ON (batsmen.player_id = players.id)
+    WHERE players.first_name!='Extras'
+    GROUP BY 1,2,3;
+"""
+
+BOWLER_VIEW_SQLITE = """
+CREATE VIEW bowler_all_seasons AS
+    SELECT players.id, players.first_name || ' ' || players.last_name as name, matches.season,
+    SUM(bowlers.wickets) as total
+    FROM bowlers
+    JOIN matches_statistics ON (bowlers.match_statistics_id = matches_statistics.id)
+    JOIN matches ON (matches_statistics.match_id = matches.id)
+    JOIN players ON (bowlers.player_id = players.id)
+    GROUP BY 1,2,3;
+"""
+
+BATSMEN_VIEW_SQLITE = """
+CREATE VIEW batsmen_all_seasons AS
+    SELECT players.id, players.first_name || ' ' || players.last_name as name, matches.season,
+    SUM(batsmen.runs) as total
+    FROM batsmen
+    JOIN matches_statistics ON (batsmen.match_statistics_id = matches_statistics.id)
+    JOIN matches ON (matches_statistics.match_id = matches.id)
+    JOIN players ON (batsmen.player_id = players.id)
+    WHERE players.first_name!='Extras'
+    GROUP BY 1,2,3;
+"""
+
+
+def create_views(apps, schema_editor):
+    vendor = schema_editor.connection.vendor
+    if vendor == "sqlite":
+        bowler_sql, batsmen_sql = BOWLER_VIEW_SQLITE, BATSMEN_VIEW_SQLITE
+    else:
+        bowler_sql, batsmen_sql = BOWLER_VIEW_MYSQL, BATSMEN_VIEW_MYSQL
+    schema_editor.execute(bowler_sql)
+    schema_editor.execute(batsmen_sql)
+
+
+def drop_views(apps, schema_editor):
+    schema_editor.execute("DROP VIEW IF EXISTS bowler_all_seasons;")
+    schema_editor.execute("DROP VIEW IF EXISTS batsmen_all_seasons;")
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ('home', '0001_initial'),
-        ('match_statistics', '__first__'),
-        ('batsman', '__first__'),
-        ('bowler', '__first__'),
-        ('match', '__first__'),
-        ('player', '__first__')
+        # Depend on the final migration of each app whose tables the views
+        # read, so the views are created only after all table alterations.
+        ('match', '0005_auto_20250521_1209'),
+        ('match_statistics', '0003_auto_20250521_1209'),
+        ('batsman', '0001_initial'),
+        ('bowler', '0003_bowler_number'),
+        ('player', '0002_auto_20250521_1209'),
     ]
 
     operations = [
-        migrations.RunSQL("""
-        CREATE VIEW bowler_all_seasons AS 
-            SELECT players.id , concat(players.first_name, ' ', players.last_name) as name, matches.season,
-            SUM(bowlers.wickets) as total
-            FROM bowlers
-            JOIN matches_statistics ON (bowlers.match_statistics_id = matches_statistics.id)
-            JOIN matches ON (matches_statistics.match_id = matches.id)
-            JOIN players ON (bowlers.player_id = players.id)
-            GROUP BY 1,2,3;
-        """),
-        migrations.RunSQL("""
-        CREATE VIEW batsmen_all_season AS 
-            SELECT players.id, concat(players.first_name, ' ', players.last_name) as name, matches.season,
-            SUM(batsmen.runs) as total
-            FROM batsmen
-            JOIN matches_statistics ON (batsmen.match_statistics_id = matches_statistics.id)
-            JOIN matches ON (matches_statistics.match_id = matches.id)
-            JOIN players ON (batsmen.player_id = players.id)
-            WHERE players.first_name!='Extras'
-            GROUP BY 1,2,3;
-        """)
+        migrations.RunPython(create_views, drop_views),
     ]
