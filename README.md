@@ -1,5 +1,3 @@
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-
 # London Fields website
 This Django project has been created for storing statistics, information and reports for a cricket club.
 
@@ -70,3 +68,66 @@ A SQLite-backed settings module is provided so the app can run without MySQL:
 DJANGO_SETTINGS_MODULE=cricbox.settings_local uv run python cricbox/manage.py migrate
 DJANGO_SETTINGS_MODULE=cricbox.settings_local uv run python cricbox/manage.py runserver
 ```
+
+## Deployment & migration steps
+
+These are the steps to deploy this version, including upgrading an existing
+install (which previously ran Django 3.1 and Poetry). **Back up the database
+before upgrading.**
+
+1. **Install prerequisites** — Python 3.12+, [uv](https://docs.astral.sh/uv/),
+   and Node.js (only needed to build the CSS, not at runtime).
+
+2. **Back up the production database.**
+
+   ```
+   mysqldump -h <host> -u <user> -p <database> > backup_$(date +%Y%m%d).sql
+   ```
+
+3. **Fetch the code and install dependencies** (including the MySQL drivers):
+
+   ```
+   git pull
+   uv sync --extra mysql
+   ```
+
+4. **Set the environment variables** listed under *Environment Variables
+   Settings* above (`DJANGO_SETTINGS_MODULE=cricbox.settings`, secret key,
+   database credentials, Sentry URL, etc.).
+
+5. **Apply database migrations:**
+
+   ```
+   uv run python cricbox/manage.py migrate
+   ```
+
+   Notes:
+   - The Django 3.1 → 6.0 jump applies cleanly; there are no destructive
+     operations. Run against the backup first if you want to rehearse it.
+   - `batsman.0002_require_runs_and_how_out` is a form-level change only
+     (`blank`), so it makes no schema change — it is applied/recorded but
+     issues no `ALTER TABLE`.
+   - The `home.0002_add_sql_views` migration (re)creates the
+     `batsmen_all_seasons` / `bowler_all_seasons` SQL views. On a fresh
+     database it is ordered to run after all table changes; on an existing
+     database it is already applied and will not re-run.
+
+6. **Build the frontend assets and collect static files:**
+
+   ```
+   npm install
+   npm run build:css
+   uv run python cricbox/manage.py collectstatic --noinput
+   ```
+
+7. **Create/verify the admin user** (if needed) and **restart the app server**
+   (Apache/WSGI, gunicorn, etc.).
+
+8. **Smoke-check** the deploy:
+
+   ```
+   uv run python cricbox/manage.py check --deploy
+   ```
+
+To roll back, redeploy the previous revision and restore the database from the
+backup taken in step 2.
