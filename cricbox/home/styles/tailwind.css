@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Scan Django templates for utility classes (relative to this file). */
-@source "../../../**/*.html";
+@source "../../**/*.html";
 
 /*
  * London Fields CC design tokens. Cricket-green primary with a dark "ink"

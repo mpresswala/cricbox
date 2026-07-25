@@ -94,7 +94,8 @@ npm run watch:css          # rebuild on template changes during development
 npm run vendor             # refresh the vendored alpine.min.js / htmx.min.js
 ```
 
-Source styles live in `cricbox/home/static/src/tailwind.css`. After changing
+Source styles live in `cricbox/home/styles/tailwind.css` (kept out of the
+served static tree). After changing
 templates or styles, run `npm run build:css` and then `collectstatic` as usual.
 
 ### Local development
