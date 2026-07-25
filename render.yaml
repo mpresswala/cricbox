@@ -18,8 +18,6 @@ services:
         value: /var/data
       - key: DJANGO_ALLOWED_HOSTS
         sync: false                  # set your custom domain(s) in the dashboard
-      - key: DJANGO_SENTRY_URL
-        sync: false                  # optional; leave unset to disable Sentry
       - key: PYTHON_VERSION
         value: "3.12.5"
     disk:

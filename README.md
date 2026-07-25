@@ -40,7 +40,6 @@ export DJANGO_DB_DATABASE=<db-username>
 export DJANGO_DB_HOSTNAME=<db-host>
 export DJANGO_DB_USERNAME=<db-username>
 export DJANGO_DB_PASSWORD=<db-password>
-export DJANGO_SENTRY_URL=<sentry-url>
 ```
 
 ### Frontend (Tailwind CSS)
@@ -93,7 +92,7 @@ before upgrading.**
 
 4. **Set the environment variables** listed under *Environment Variables
    Settings* above (`DJANGO_SETTINGS_MODULE=cricbox.settings`, secret key,
-   database credentials, Sentry URL, etc.).
+   database credentials, etc.).
 
 5. **Apply database migrations:**
 
@@ -144,8 +143,7 @@ database and uploaded media. Settings live in `cricbox/settings_render.py`
 1. Push the repo to GitHub, then in Render choose **New → Blueprint** and point
    it at the repo. It creates the web service and a 1 GB disk at `/var/data`.
 2. `DJANGO_SECRET_KEY` is generated automatically. Set `DJANGO_ALLOWED_HOSTS`
-   to your custom domain(s) (comma-separated) and, optionally,
-   `DJANGO_SENTRY_URL`.
+   to your custom domain(s) (comma-separated).
 3. On deploy Render runs `render-build.sh` (installs deps with uv, runs
    `collectstatic`), then the pre-deploy `migrate`, then starts gunicorn. The
    committed Tailwind CSS means **no Node build is needed**.

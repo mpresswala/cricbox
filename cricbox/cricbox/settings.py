@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -177,16 +174,6 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
-
-
-sentry_sdk.init(
-    dsn=os.environ["DJANGO_SENTRY_URL"],
-    integrations=[DjangoIntegration()],
-    traces_sample_rate=0.5,
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True,
-)
 
 MEDIA_ROOT = f"{os.environ['DJANGO_CRICBOX_PATH']}cricbox/media/"
 MEDIA_URL = "/media/"

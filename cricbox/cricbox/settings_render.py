@@ -5,7 +5,7 @@ Run with:  DJANGO_SETTINGS_MODULE=cricbox.settings_render
 The SQLite database and uploaded media live on a Render persistent disk
 mounted at DJANGO_DATA_DIR (default /var/data). Static files are served by
 WhiteNoise. Only DJANGO_SECRET_KEY is strictly required; DJANGO_ALLOWED_HOSTS
-and DJANGO_SENTRY_URL are picked up automatically when set.
+is picked up automatically when set.
 """
 
 import os
@@ -144,19 +144,6 @@ LOGGING = {
     "handlers": {"console": {"class": "logging.StreamHandler"}},
     "root": {"handlers": ["console"], "level": "INFO"},
 }
-
-# Optional Sentry — only initialised when a DSN is provided.
-_sentry_dsn = os.environ.get("DJANGO_SENTRY_URL")
-if _sentry_dsn:
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-
-    sentry_sdk.init(
-        dsn=_sentry_dsn,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.2,
-        send_default_pii=True,
-    )
 
 # django-unfold admin theme
 from cricbox.unfold_config import UNFOLD  # noqa: E402,F401

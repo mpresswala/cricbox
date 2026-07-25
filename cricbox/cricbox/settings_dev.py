@@ -90,10 +90,10 @@ WSGI_APPLICATION = "cricbox.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "london_fields",
-        "HOST": "192.168.200.103",
-        "USER": "django",
-        "PASSWORD": "Wz4vK36!DSeh%N",
+        "NAME": os.environ.get("DJANGO_DB_DATABASE", "london_fields"),
+        "HOST": os.environ.get("DJANGO_DB_HOSTNAME", "127.0.0.1"),
+        "USER": os.environ.get("DJANGO_DB_USERNAME", "django"),
+        "PASSWORD": os.environ.get("DJANGO_DB_PASSWORD", ""),
     }
 }
 
