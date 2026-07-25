@@ -26,7 +26,75 @@
 </section>
 
 <div class="container-page py-12">
-    <div class="grid gap-6 sm:grid-cols-3">
+    <!-- Live cards: next fixture, latest result, latest report -->
+    <div class="grid gap-6 md:grid-cols-3">
+        <div class="card">
+            <p class="stat-label">Next Fixture</p>
+            {% if next_fixture %}
+                <p class="mt-2 text-lg font-semibold">vs {{ next_fixture.opposition|default:"TBC" }}</p>
+                <p class="mt-1 text-sm text-ink-500">
+                    {{ next_fixture.date }}{% if next_fixture.venue %} &middot; {{ next_fixture.venue }}{% endif %}
+                    {% if next_fixture.mtype %}<br>{{ next_fixture.mtype }}{% if next_fixture.home_or_away %} &middot; {{ next_fixture.home_or_away }}{% endif %}{% endif %}
+                </p>
+                <a href="{% url 'fixtures-overview' %}" class="mt-3 inline-block text-sm font-medium text-brand-700 hover:underline">All fixtures →</a>
+            {% else %}
+                <p class="mt-2 text-sm text-ink-500">No upcoming fixtures scheduled.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <p class="stat-label">Latest Result</p>
+            {% if latest_result %}
+                <p class="mt-2 text-lg font-semibold">
+                    {% if latest_result.result %}<span class="badge">{{ latest_result.result }}</span>{% endif %}
+                    vs {{ latest_result.match.opposition|default:"—" }}
+                </p>
+                <p class="mt-1 text-sm text-ink-500">
+                    London Fields {{ latest_result.london_fields_score|default:"—" }}{% if latest_result.london_fields_wickets is not None %}/{{ latest_result.london_fields_wickets }}{% endif %}
+                    &middot; Opp {{ latest_result.opposition_score|default:"—" }}{% if latest_result.opposition_wickets is not None %}/{{ latest_result.opposition_wickets }}{% endif %}
+                    <br>{{ latest_result.match.date }}
+                </p>
+                <a href="{% url 'match-overview' latest_result.id %}" class="mt-3 inline-block text-sm font-medium text-brand-700 hover:underline">Scorecard →</a>
+            {% else %}
+                <p class="mt-2 text-sm text-ink-500">No results recorded yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <p class="stat-label">Latest Report</p>
+            {% if latest_report %}
+                <p class="mt-2 text-lg font-semibold">{{ latest_report.report_headline }}</p>
+                <p class="mt-1 text-sm text-ink-500">vs {{ latest_report.match.opposition|default:"—" }} &middot; {{ latest_report.match.date }}</p>
+                <a href="{% url 'match-overview' latest_report.id %}" class="mt-3 inline-block text-sm font-medium text-brand-700 hover:underline">Read report →</a>
+            {% else %}
+                <p class="mt-2 text-sm text-ink-500">No match reports yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Season so far -->
+    {% if season_summary.played %}
+    <div class="card mt-8">
+        <div class="flex items-baseline justify-between">
+            <h2 class="text-lg font-semibold">{{ season_summary.season }} Season So Far</h2>
+            <a href="{% url 'season-overview' %}" class="text-sm font-medium text-brand-700 hover:underline">Season overview →</a>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+            <div class="stat-tile"><div class="stat-value">{{ season_summary.played }}</div><div class="stat-label">Played</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ season_summary.won }}</div><div class="stat-label">Won</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ season_summary.lost }}</div><div class="stat-label">Lost</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ season_summary.drawn }}</div><div class="stat-label">Drawn</div></div>
+            {% if season_summary.top_bat %}
+            <div class="stat-tile"><div class="stat-value">{{ season_summary.top_bat.total }}</div><div class="stat-label">{{ season_summary.top_bat.name }} runs</div></div>
+            {% endif %}
+            {% if season_summary.top_bowl %}
+            <div class="stat-tile"><div class="stat-value">{{ season_summary.top_bowl.total }}</div><div class="stat-label">{{ season_summary.top_bowl.name }} wkts</div></div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="mt-8 grid gap-6 sm:grid-cols-3">
         <a href="{% url 'players' %}" class="card transition hover:shadow-md">
             <h3 class="text-lg font-semibold">Players</h3>
             <p class="mt-1 text-sm text-ink-500">Meet the squad and browse player profiles.</p>

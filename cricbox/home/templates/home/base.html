@@ -2,6 +2,17 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
+    <script>
+      // Apply the saved theme before paint to avoid a flash of the wrong mode.
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches)) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="London Fields Cricket Club — fixtures, results, players and statistics.">
@@ -35,6 +46,20 @@
             <img src="{% static 'assets/img/lfcc_logo.png' %}" alt="London Fields CC" class="h-9 w-auto brightness-0 invert">
             <span class="text-lg font-bold tracking-tight sm:text-xl">London Fields CC</span>
         </a>
+
+        <div class="flex items-center gap-2">
+        <!-- Player search (desktop) -->
+        <div class="relative hidden lg:block" x-data="{ open: false }" @click.outside="open = false">
+            <input type="search" name="q" placeholder="Search players…" autocomplete="off"
+                   class="w-44 rounded-md border border-ink-700 bg-ink-800 px-3 py-1.5 text-sm text-white placeholder-ink-400 transition-all focus:w-56 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                   hx-get="{% url 'player-search' %}"
+                   hx-trigger="keyup changed delay:250ms, focus"
+                   hx-target="#player-search-results"
+                   hx-swap="innerHTML"
+                   @focus="open = true" @keyup="open = true">
+            <div id="player-search-results" x-show="open" x-cloak
+                 class="absolute right-0 z-50 mt-1 w-64 overflow-hidden rounded-lg border border-ink-100 bg-white text-ink-800 shadow-lg dark:border-ink-800 dark:bg-ink-900 dark:text-ink-100"></div>
+        </div>
 
         <!-- Desktop nav -->
         <nav class="hidden items-center gap-1 lg:flex">
@@ -75,6 +100,7 @@
             </div>
 
             <a href="{% url 'players' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">Players</a>
+            <a href="{% url 'player-compare' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">Compare</a>
             <a href="{% url 'site-history' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">History</a>
             <a href="{% url 'site-about' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">About</a>
             <a href="{% url 'site-links' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">Links</a>
@@ -85,11 +111,20 @@
             </a>
         </nav>
 
+        <!-- Dark mode toggle -->
+        <button type="button" aria-label="Toggle dark mode"
+                class="rounded-md p-2 text-ink-200 hover:bg-ink-800 hover:text-white"
+                @click="document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light')">
+            <svg class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="hidden h-5 w-5 dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.72 0l-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"/></svg>
+        </button>
+
         <!-- Mobile toggle -->
         <button @click="mobileOpen = !mobileOpen" class="rounded-md p-2 text-ink-200 hover:bg-ink-800 hover:text-white lg:hidden" aria-label="Toggle menu">
             <svg x-show="!mobileOpen" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             <svg x-show="mobileOpen" x-cloak class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
+        </div>
     </div>
 
     <!-- Mobile menu -->
@@ -112,6 +147,7 @@
             <a href="{% url 'site-results' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Results Record</a>
             <div class="my-2 border-t border-ink-800"></div>
             <a href="{% url 'players' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">Players</a>
+            <a href="{% url 'player-compare' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">Compare</a>
             <a href="{% url 'site-history' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">History</a>
             <a href="{% url 'site-about' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">About</a>
             <a href="{% url 'site-links' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">Links</a>

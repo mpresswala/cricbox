@@ -1,7 +1,7 @@
 {% load django_tables2 %}
 {% load i18n l10n %}
 {% block table-wrapper %}
-<div class="table-container overflow-x-auto rounded-xl border border-ink-100 bg-white shadow-sm">
+<div class="table-container table-card">
     {% block table %}
         <table {% render_attrs table.attrs class="stats-table" %}>
             {% block table.thead %}
@@ -44,7 +44,7 @@
             {% block table.tfoot %}
             {% if table.has_footer %}
             <tfoot {{ table.attrs.tfoot.as_html }}>
-                <tr class="bg-ink-100 font-semibold">
+                <tr class="bg-ink-100 font-semibold dark:bg-ink-800">
                 {% for column in table.columns %}
                     <td class="px-3 py-2.5" {{ column.attrs.tf.as_html }}>{{ column.footer }}</td>
                 {% endfor %}
@@ -62,7 +62,7 @@
         {% if table.page.has_previous %}
             {% block pagination.previous %}
             <a href="{% querystring_replace table.prefixed_page_field=table.page.previous_page_number %}"
-               class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50">
+               class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-200 dark:hover:bg-ink-700">
                 &laquo; {% trans 'previous' %}
             </a>
             {% endblock pagination.previous %}
@@ -74,7 +74,7 @@
                 <span class="rounded-md border border-brand-600 bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white">{{ p }}</span>
             {% else %}
                 <a {% if p != '...' %}href="{% querystring_replace table.prefixed_page_field=p %}"{% endif %}
-                   class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50">{{ p }}</a>
+                   class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-200 dark:hover:bg-ink-700">{{ p }}</a>
             {% endif %}
         {% endfor %}
         {% endblock pagination.range %}
@@ -82,7 +82,7 @@
         {% if table.page.has_next %}
             {% block pagination.next %}
             <a href="{% querystring_replace table.prefixed_page_field=table.page.next_page_number %}"
-               class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50">
+               class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-200 dark:hover:bg-ink-700">
                 {% trans 'next' %} &raquo;
             </a>
             {% endblock pagination.next %}

@@ -1,6 +1,7 @@
 from batsman.models import Batsman
 from bowler.models import Bowler
 from cricbox.utils import FIFTIES, FIVERS, HUNDREDS, NON_DISMISSAL_WICKET_TYPES, SITE_URLS
+from match.models import Match
 from match_statistics.models import MatchStatistics
 from player.models import Appointment, Player
 
@@ -22,6 +23,7 @@ from .tables import (
 from django.db.models import Count, F, Q, Sum, Value
 from django.db.models.functions import Concat
 from django.shortcuts import render
+from django.utils import timezone
 from django.views.generic import TemplateView
 
 import django_filters
@@ -47,9 +49,53 @@ def _season_totals(model, field):
     )
 
 
+def _season_leader(model, field, season):
+    """Top player for Sum(field) in a season, as {'name', 'total'} or None."""
+    return (
+        model.objects.filter(_REAL_PLAYERS, match_statistics__match__season=season)
+        .values(name=Concat("player__first_name", Value(" "), "player__last_name"))
+        .annotate(total=Sum(field))
+        .order_by("-total")
+        .first()
+    )
+
+
 # Create your views here.
 def home(request):
-    return render(request, "home/home.html", context=SITE_URLS)
+    today = timezone.now().date()
+    season = today.year
+    context = dict(SITE_URLS)
+
+    context["next_fixture"] = (
+        Match.objects.filter(date__gte=today)
+        .select_related("opposition", "venue", "mtype", "home_or_away")
+        .order_by("date")
+        .first()
+    )
+    context["latest_result"] = (
+        MatchStatistics.objects.filter(match__date__lte=today, result__isnull=False)
+        .select_related("match__opposition", "match__venue", "result")
+        .order_by("-match__date")
+        .first()
+    )
+    context["latest_report"] = (
+        MatchStatistics.objects.exclude(Q(report_headline__isnull=True) | Q(report_headline=""))
+        .select_related("match__opposition")
+        .order_by("-match__date")
+        .first()
+    )
+
+    season_stats = MatchStatistics.objects.filter(match__season=season)
+    context["season_summary"] = {
+        "season": season,
+        "played": season_stats.count(),
+        "won": season_stats.filter(result__name="Won").count(),
+        "lost": season_stats.filter(result__name="Lost").count(),
+        "drawn": season_stats.filter(result__name="Drawn").count(),
+        "top_bat": _season_leader(Batsman, "runs", season),
+        "top_bowl": _season_leader(Bowler, "wickets", season),
+    }
+    return render(request, "home/home.html", context)
 
 
 def stats(request):
