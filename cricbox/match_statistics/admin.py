@@ -30,19 +30,27 @@ class MatchStatisticsAdmin(ModelAdmin):
     inlines = (BatsmanAdmin, BowlerAdmin)
     # autocomplete_fields = ["batsman__player", "bowler__player"]
 
-    def date(self, x):
-        return x.match.date
+    @admin.display(description="Date")
+    def date(self, obj):
+        return obj.match.date if obj.match else ""
 
-    def opposition(self, x):
-        return x.match.opposition.name
+    @admin.display(description="Opposition")
+    def opposition(self, obj):
+        if obj.match and obj.match.opposition:
+            return obj.match.opposition.name
+        return ""
 
-    def venue(self, x):
-        return x.match.venue.name
+    @admin.display(description="Venue")
+    def venue(self, obj):
+        if obj.match and obj.match.venue:
+            return obj.match.venue.name
+        return ""
 
-    def mtype(self, x):
-        return x.match.mtype.name
-
-    mtype.short_description = "Type"
+    @admin.display(description="Type")
+    def mtype(self, obj):
+        if obj.match and obj.match.mtype:
+            return obj.match.mtype.name
+        return ""
 
 
 admin.site.register(Result, ResultAdmin)
