@@ -27,6 +27,8 @@ NO_ARG_URL_NAMES = [
     "opposition-overview",
     "venues-overview",
     "players",
+    "player-compare",
+    "player-search",
 ]
 
 

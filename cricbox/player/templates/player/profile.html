@@ -48,14 +48,14 @@
         {% if best_batting %}
         <div class="card">
             <div class="stat-label">Highest Score</div>
-            <div class="mt-1 text-3xl font-bold text-ink-900">{{ best_batting.runs }}{% if best_batting.how_out.name == "Not Out" %}*{% endif %}</div>
+            <div class="mt-1 text-3xl font-bold text-ink-900 dark:text-white">{{ best_batting.runs }}{% if best_batting.how_out.name == "Not Out" %}*{% endif %}</div>
             <div class="mt-1 text-sm text-ink-500">vs {{ best_batting.match_statistics.match.opposition }} &middot; {{ best_batting.match_statistics.match.season }}</div>
         </div>
         {% endif %}
         {% if best_bowling %}
         <div class="card">
             <div class="stat-label">Best Bowling</div>
-            <div class="mt-1 text-3xl font-bold text-ink-900">{{ best_bowling.figures }}</div>
+            <div class="mt-1 text-3xl font-bold text-ink-900 dark:text-white">{{ best_bowling.figures }}</div>
             <div class="mt-1 text-sm text-ink-500">vs {{ best_bowling.match_statistics.match.opposition }} &middot; {{ best_bowling.match_statistics.match.season }}</div>
         </div>
         {% endif %}
@@ -75,7 +75,7 @@
     {% if dismissals %}
     <div>
         <h2 class="mb-4 text-lg font-semibold">How {{ player.first_name }} Gets Out</h2>
-        <div class="overflow-x-auto rounded-xl border border-ink-100 bg-white shadow-sm">
+        <div class="table-card">
             <table class="stats-table">
                 <thead><tr><th>Dismissal</th><th>Count</th><th>%</th></tr></thead>
                 <tbody>
@@ -101,12 +101,12 @@
         <div class="card">
             <h2 class="mb-4 text-lg font-semibold">Career Information</h2>
             <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">League Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_league|last|default:"—" }}</dd></div>
-                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last League</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_league|first|default:"—" }}</dd></div>
-                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Friendly Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_friendly|last|default:"—" }}</dd></div>
-                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last Friendly</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_friendly|first|default:"—" }}</dd></div>
-                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">VPCCL Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_vpccl|last|default:"—" }}</dd></div>
-                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last VPCCL</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_vpccl|first|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">League Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800 dark:text-ink-100">{{ match_league|last|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last League</dt><dd class="mt-1 text-sm font-medium text-ink-800 dark:text-ink-100">{{ match_league|first|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Friendly Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800 dark:text-ink-100">{{ match_friendly|last|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last Friendly</dt><dd class="mt-1 text-sm font-medium text-ink-800 dark:text-ink-100">{{ match_friendly|first|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">VPCCL Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800 dark:text-ink-100">{{ match_vpccl|last|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last VPCCL</dt><dd class="mt-1 text-sm font-medium text-ink-800 dark:text-ink-100">{{ match_vpccl|first|default:"—" }}</dd></div>
             </dl>
         </div>
     </div>

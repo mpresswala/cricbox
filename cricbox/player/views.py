@@ -8,7 +8,9 @@ from match.models import Match
 from .models import Player
 from .tables import PlayersTable
 
-from django.db.models import Count, F
+from django.db.models import Count, F, Value
+from django.db.models.functions import Concat
+from django.shortcuts import render
 from django.views.generic import TemplateView
 
 import django_filters
@@ -16,6 +18,65 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
 # Create your views here.
+
+
+_ZERO_BATTING = {
+    "innings": 0, "runs_scored": 0, "not_out": 0, "highest": 0,
+    "average": None, "fifties": 0, "hundreds": 0,
+}
+_ZERO_BOWLING = {
+    "overs": 0, "total_wickets": 0, "average": None,
+    "economy": None, "strike_rate": None, "fives": 0,
+}
+
+
+def _player_summary(player_id):
+    """Career batting/bowling summary + appearances for one player, or None.
+
+    Missing batting/bowling records are zero-filled so a genuine 0 (e.g. no
+    hundreds) shows as 0 rather than being mistaken for missing data; rate
+    stats that are undefined (no wickets/overs) stay None -> rendered as "—".
+    """
+    player = Player.objects.filter(id=player_id).first()
+    if player is None:
+        return None
+    batting = Batsman.stat_objects.filter(player_id=player_id).first() or _ZERO_BATTING
+    bowling = Bowler.stat_objects.filter(player_id=player_id).first()
+    bowling = {**bowling, "overs": balls_to_overs(bowling["total_balls"])} if bowling else _ZERO_BOWLING
+    return {
+        "player": player,
+        "batting": batting,
+        "bowling": bowling,
+        "appearances": Match.objects.filter(players__id=player_id).count(),
+    }
+
+
+def player_search(request):
+    """HTMX type-ahead: return a small list of players matching ?q=."""
+    query = request.GET.get("q", "").strip()
+    results = []
+    if query:
+        results = (
+            Player.objects.exclude(INVALID_PLAYERS)
+            .annotate(full_name_annotated=Concat("first_name", Value(" "), "last_name"))
+            .filter(full_name_annotated__icontains=query)
+            .order_by("first_name", "last_name")[:8]
+        )
+    return render(request, "player/_search_results.html", {"results": results, "query": query})
+
+
+class PlayerCompareView(TemplateView):
+    template_name = "player/compare.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["players"] = Player.objects.exclude(INVALID_PLAYERS).order_by("first_name", "last_name")
+        a_id = self.request.GET.get("a")
+        b_id = self.request.GET.get("b")
+        context["a_id"], context["b_id"] = a_id, b_id
+        context["a"] = _player_summary(a_id) if a_id else None
+        context["b"] = _player_summary(b_id) if b_id else None
+        return context
 
 
 class PlayersFilter(django_filters.FilterSet):
