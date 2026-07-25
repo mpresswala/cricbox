@@ -22,7 +22,8 @@
             {% endif %}
             {% endblock table.thead %}
             {% block table.tbody %}
-                <tbody {{ table.attrs.tbody.as_html }}>
+                {# hx-boost=false: cell links navigate normally; sort/pagination still boost #}
+                <tbody hx-boost="false" {{ table.attrs.tbody.as_html }}>
                 {% for row in table.paginated_rows %}
                     {% block table.tbody.row %}
                     <tr {{ row.attrs.as_html }}>
