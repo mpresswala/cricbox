@@ -1,6 +1,5 @@
 from .views import BatsmanView, BatsmenView
 
-# Django imports
 from django.urls import path
 
 urlpatterns = [

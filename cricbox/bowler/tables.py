@@ -1,8 +1,6 @@
-# Cricbox imports
 from cricbox.tables import CareerOversColumn, FloatColumn, SummingColumn, SummingOversColumn
 from cricbox.utils import TABLE_ATTRS
 
-# Django third party apps
 import django_tables2 as tables
 
 

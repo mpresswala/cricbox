@@ -1,9 +1,7 @@
-# Cricbox imports
 from match.models import Match
 
 from .choices import EVENT_FIRST
 
-# Django imports
 from django.db import models
 
 

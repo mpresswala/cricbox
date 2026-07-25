@@ -1,7 +1,5 @@
-# Cricbox imports
 from cricbox.utils import TABLE_ATTRS
 
-# Django third party apps
 import django_tables2 as tables
 
 

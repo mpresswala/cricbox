@@ -6,7 +6,6 @@ This file is for local development / verification only. Production continues
 to use settings.py (MySQL + Sentry, driven by environment variables).
 """
 
-# Standard imports
 import os
 from pathlib import Path
 

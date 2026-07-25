@@ -1,6 +1,5 @@
 from .views import PlayersView, ProfileView
 
-# Django imports
 from django.urls import path
 
 # path: players/

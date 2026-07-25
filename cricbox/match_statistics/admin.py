@@ -1,5 +1,3 @@
-# Cricbox imports
-# Third-party imports
 from unfold.admin import ModelAdmin, TabularInline
 
 from batsman.models import Batsman
@@ -7,7 +5,6 @@ from bowler.models import Bowler
 
 from .models import MatchStatistics, Result
 
-# Django imports
 from django.contrib import admin
 
 

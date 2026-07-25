@@ -1,9 +1,7 @@
-# Standard imports
 import datetime
 import random
 from random import randint
 
-# Cricbox imports
 from batsman.models import Batsman, WicketType
 from bowler.models import Bowler
 from match.models import HomeAway, Match, MatchType, PlayerSkill

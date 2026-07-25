@@ -1,8 +1,6 @@
-# Standard imports
 import datetime
 from decimal import Decimal
 
-# Django imports
 from django.db.models import Q
 
 # There are 6 balls in an over. Overs are stored/entered as a decimal where the

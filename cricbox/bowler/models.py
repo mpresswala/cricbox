@@ -1,9 +1,7 @@
-# Cricbox imports
 from cricbox.utils import BALLS_PER_OVER, overs_to_balls
 from match_statistics.models import MatchStatistics
 from player.models import Player
 
-# Django imports
 from django.db import models
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, IntegerField, Q, Sum, Value
 from django.db.models.functions import Concat, Floor, NullIf

@@ -1,4 +1,3 @@
-# Django imports
 from django.test import TestCase
 from django.urls import NoReverseMatch, reverse
 

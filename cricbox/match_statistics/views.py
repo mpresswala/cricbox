@@ -7,11 +7,9 @@ from .tables import (
     VenuesTable,
 )
 
-# Django imports
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, FloatField, Q
 from django.views.generic.base import TemplateView
 
-# Django third party apps
 import django_filters
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin

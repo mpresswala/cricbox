@@ -1,10 +1,8 @@
-# Cricbox imports
 from cricbox.tables import FloatColumn, SummingColumn
 from cricbox.utils import TABLE_ATTRS
 
 from .models import MatchStatistics
 
-# Django third party apps
 import django_tables2 as tables
 
 

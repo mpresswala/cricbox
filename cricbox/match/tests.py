@@ -1,12 +1,9 @@
-# Standard imports
 from datetime import date
 
-# Cricbox imports
 from player.models import Player
 
 from .models import Match, PlayerMatchAttribute
 
-# Django imports
 from django.test import TestCase
 from django.urls import reverse
 

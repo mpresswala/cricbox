@@ -1,15 +1,12 @@
-# Cricbox imports
 from cricbox.utils import PSEUDO_PLAYER_NAMES
 
 from .models import Match
 from .tables import AppearancesTable, FixturesTable
 
-# Django imports
 from django.db.models import Count
 from django.db.models import Value as V
 from django.db.models.functions import Concat, Lower, Trim
 
-# Django third party apps
 import django_filters
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin

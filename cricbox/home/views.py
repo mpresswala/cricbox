@@ -1,6 +1,3 @@
-# Standard imports
-
-# Cricbox imports
 from batsman.models import Batsman
 from bowler.models import Bowler
 from cricbox.utils import FIFTIES, FIVERS, HUNDREDS, SITE_URLS
@@ -16,11 +13,9 @@ from .tables import (
     VeteransTable,
 )
 
-# Django imports
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-# Django third party apps
 import django_filters
 from django_filters.views import FilterView
 from django_tables2.views import MultiTableMixin, SingleTableMixin

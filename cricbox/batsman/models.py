@@ -1,9 +1,7 @@
-# Cricbox imports
 from cricbox.utils import FIFTIES, HUNDREDS
 from match_statistics.models import MatchStatistics
 from player.models import Player
 
-# Django imports
 from django.db import models
 from django.db.models import (
     Count,

@@ -1,10 +1,8 @@
-# Cricbox imports
 from match_statistics.models import MatchStatistics
 from player.models import Player
 
 from .models import Bowler
 
-# Django imports
 from django.test import TestCase
 
 

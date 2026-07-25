@@ -1,10 +1,8 @@
-# Cricbox imports
 from match_statistics.models import MatchStatistics
 from player.models import Player
 
 from .models import Batsman, WicketType
 
-# Django imports
 from django.forms.models import modelform_factory
 from django.test import TestCase
 

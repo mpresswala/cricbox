@@ -1,9 +1,7 @@
-# Third-party imports
 from unfold.admin import ModelAdmin
 
 from .models import Batsman, WicketType
 
-# Django imports
 from django.contrib import admin
 
 

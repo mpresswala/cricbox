@@ -1,4 +1,3 @@
-# Third-party imports
 from unfold.admin import ModelAdmin
 
 from .models import (
@@ -10,7 +9,6 @@ from .models import (
     PlayingRole,
 )
 
-# Django imports
 from django.contrib import admin
 
 

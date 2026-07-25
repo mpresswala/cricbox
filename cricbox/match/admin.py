@@ -1,12 +1,9 @@
-# Cricbox imports
-# Third-party imports
 from unfold.admin import ModelAdmin, TabularInline
 
 from match.models import PlayerMatchAttribute
 
 from .models import HomeAway, Match, MatchType, PlayerSkill
 
-# Django imports
 from django.contrib import admin
 
 

@@ -1,7 +1,5 @@
-# Cricbox imports
 from cricbox.utils import balls_to_overs, overs_to_balls
 
-# Django third party apps
 import django_tables2 as tables
 
 
