@@ -100,13 +100,13 @@
         </div>
         <div class="card">
             <h2 class="mb-4 text-lg font-semibold">Career Information</h2>
-            <dl class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
-                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">League Debut</dt><dd class="font-medium">{{ match_league|last|default:"—" }}</dd></div>
-                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last League</dt><dd class="font-medium">{{ match_league|first|default:"—" }}</dd></div>
-                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Friendly Debut</dt><dd class="font-medium">{{ match_friendly|last|default:"—" }}</dd></div>
-                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last Friendly</dt><dd class="font-medium">{{ match_friendly|first|default:"—" }}</dd></div>
-                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">VPCCL Debut</dt><dd class="font-medium">{{ match_vpccl|last|default:"—" }}</dd></div>
-                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last VPCCL</dt><dd class="font-medium">{{ match_vpccl|first|default:"—" }}</dd></div>
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">League Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_league|last|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last League</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_league|first|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Friendly Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_friendly|last|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last Friendly</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_friendly|first|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">VPCCL Debut</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_vpccl|last|default:"—" }}</dd></div>
+                <div class="border-b border-ink-100 pb-3"><dt class="text-xs font-medium uppercase tracking-wide text-ink-500">Last VPCCL</dt><dd class="mt-1 text-sm font-medium text-ink-800">{{ match_vpccl|first|default:"—" }}</dd></div>
             </dl>
         </div>
     </div>
