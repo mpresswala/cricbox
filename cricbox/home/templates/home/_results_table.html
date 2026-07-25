@@ -1,0 +1,15 @@
+{% comment %}Wraps a django-tables2 `table` in an HTMX swap target.
+
+The filter form (home/_filters.html) targets #stats-results, and hx-boost here
+turns the table's own pagination and column-sort links into in-place swaps too.
+The view is unchanged: it returns the full page and HTMX selects #stats-results
+out of the response, so this degrades gracefully without JavaScript.{% endcomment %}
+{% load render_table from django_tables2 %}
+<div id="stats-results"
+     hx-boost="true"
+     hx-target="#stats-results"
+     hx-select="#stats-results"
+     hx-swap="outerHTML show:window:top"
+     hx-push-url="true">
+    {% render_table table %}
+</div>

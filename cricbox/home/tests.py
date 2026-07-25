@@ -52,3 +52,32 @@ class PageSmokeTests(TestCase):
     def test_admin_login_renders(self):
         response = self.client.get("/admin/login/")
         self.assertEqual(response.status_code, 200)
+
+
+# Each stats table exposes sortable columns via ?sort=<accessor>. A wrong
+# order_by on a column raises a FieldError (500), so exercise them all.
+SORTABLE_COLUMNS = {
+    "batsmen-stats": [
+        "player_full_name", "innings", "runs_scored", "not_out",
+        "highest", "average", "fifties", "hundreds",
+    ],
+    "bowling-stats-all": [
+        "overs", "maidens", "runs", "total_wickets",
+        "average", "strike_rate", "economy",
+    ],
+}
+
+
+class TableSortingTests(TestCase):
+    """Every sortable column orders without raising a server error."""
+
+    def test_columns_are_sortable(self):
+        for name, columns in SORTABLE_COLUMNS.items():
+            base = reverse(name)
+            for column in columns:
+                with self.subTest(url_name=name, column=column):
+                    response = self.client.get(base, {"sort": column})
+                    self.assertLess(
+                        response.status_code, 500,
+                        msg=f"{name}?sort={column} returned {response.status_code}",
+                    )

@@ -147,3 +147,9 @@
     @apply border-brand-600 text-brand-700;
   }
 }
+
+/* Dim the results table while an HTMX filter/pagination request is in flight. */
+#stats-results.htmx-request {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}

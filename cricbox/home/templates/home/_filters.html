@@ -1,6 +1,15 @@
-{% comment %}Reusable Tailwind-styled django-filter form. Expects `filter` in context.{% endcomment %}
+{% comment %}Reusable Tailwind-styled django-filter form. Expects `filter` in context.
+Live-updates the #stats-results table via HTMX (falls back to a normal GET
+submit when JavaScript is unavailable).{% endcomment %}
 {% if filter %}
-<form action="" method="get" class="filter-form card mb-6">
+<form action="" method="get" class="filter-form card mb-6"
+      hx-get="{{ request.path }}"
+      hx-target="#stats-results"
+      hx-select="#stats-results"
+      hx-swap="outerHTML show:window:top"
+      hx-push-url="true"
+      hx-indicator="#stats-results"
+      hx-trigger="submit, keyup changed delay:400ms, change delay:100ms">
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {% for field in filter.form %}
         <div>
