@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: cricbox
+    runtime: python
+    plan: starter            # Starter supports persistent disks + preDeploy
+    region: frankfurt        # pick the region closest to your members
+    branch: develop
+    buildCommand: "./render-build.sh"
+    # Runs after build with the persistent disk mounted, before going live.
+    preDeployCommand: ".venv/bin/python cricbox/manage.py migrate --no-input"
+    startCommand: ".venv/bin/gunicorn cricbox.wsgi:application --chdir cricbox --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: cricbox.settings_render
+      - key: DJANGO_SECRET_KEY
+        generateValue: true          # Render generates and stores a secret
+      - key: DJANGO_DATA_DIR
+        value: /var/data
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false                  # set your custom domain(s) in the dashboard
+      - key: DJANGO_SENTRY_URL
+        sync: false                  # optional; leave unset to disable Sentry
+      - key: PYTHON_VERSION
+        value: "3.12.5"
+    disk:
+      name: cricbox-data
+      mountPath: /var/data
+      sizeGB: 1

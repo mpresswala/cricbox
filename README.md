@@ -131,3 +131,58 @@ before upgrading.**
 
 To roll back, redeploy the previous revision and restore the database from the
 backup taken in step 2.
+
+## Hosting on Render (SQLite on a persistent disk)
+
+A [Render](https://render.com) Blueprint is included (`render.yaml`) that runs
+the app as a single web service with a **persistent disk** holding the SQLite
+database and uploaded media. Settings live in `cricbox/settings_render.py`
+(SQLite on the disk, WhiteNoise for static files, HTTPS/HSTS hardening).
+
+**First deploy**
+
+1. Push the repo to GitHub, then in Render choose **New → Blueprint** and point
+   it at the repo. It creates the web service and a 1 GB disk at `/var/data`.
+2. `DJANGO_SECRET_KEY` is generated automatically. Set `DJANGO_ALLOWED_HOSTS`
+   to your custom domain(s) (comma-separated) and, optionally,
+   `DJANGO_SENTRY_URL`.
+3. On deploy Render runs `render-build.sh` (installs deps with uv, runs
+   `collectstatic`), then the pre-deploy `migrate`, then starts gunicorn. The
+   committed Tailwind CSS means **no Node build is needed**.
+
+**Seeding data from the old MySQL site (one-off)**
+
+The disk starts empty, so migrations create a fresh schema. Load your existing
+data once, e.g.:
+
+- Convert a MySQL dump to SQLite locally (see `scripts/`), then copy the file to
+  the disk with Render SSH:
+  `cat db.sqlite3 | render ssh <service> -- 'cat > /var/data/db.sqlite3'`
+  (stop the service first, and remove any stale `-wal`/`-shm` files), **or**
+- `dumpdata` from the old site to JSON and `loaddata` it via Render SSH.
+
+Then create an admin user: `render ssh <service> -- .venv/bin/python cricbox/manage.py createsuperuser`.
+
+## Backups (SQLite)
+
+A `backup` management command takes a **consistent** snapshot of the database
+(SQLite's online-backup API — safe while the app is running) plus a tarball of
+the media directory, with retention:
+
+```
+uv run python cricbox/manage.py backup            # -> $DJANGO_DATA_DIR/backups
+uv run python cricbox/manage.py backup --dest /path --keep 30
+```
+
+Schedule it as a **Render Cron Job** (same repo/disk) running nightly, e.g.
+`.venv/bin/python cricbox/manage.py backup`. Because a backup on the same disk
+does not protect against disk loss, also copy the snapshots **off-site**
+(e.g. `rclone`/`aws s3` to Backblaze B2 or S3) from the cron job.
+
+For near-zero-data-loss, point-in-time recovery instead, run
+[Litestream](https://litestream.io) to stream the WAL to object storage
+continuously (WAL mode is already enabled in `settings_render.py`); this needs a
+Dockerfile-based Render service.
+
+**Restore:** stop the service, replace `/var/data/db.sqlite3` with a snapshot
+(remove stale `-wal`/`-shm`), restore `media/` if needed, and start the service.

@@ -15,6 +15,8 @@ dependencies = [
     "django-bootstrap4>=26.1",
     "django-unfold>=0.101.0",
     "sentry-sdk>=2.0",
+    "gunicorn>=23.0",
+    "whitenoise>=6.8",
 ]
 
 [project.urls]
