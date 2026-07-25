@@ -18,7 +18,6 @@ class SeasonTable(tables.Table):
     class Meta:
         attrs = TABLE_ATTRS
         model = MatchStatistics
-        template_name = "django_tables2/bootstrap4.html"
         fields = (
             "match__season",
             "played",
@@ -44,7 +43,6 @@ class OppositionTable(tables.Table):
     class Meta:
         attrs = TABLE_ATTRS
         model = MatchStatistics
-        template_name = "django_tables2/bootstrap4.html"
         fields = (
             "match__opposition__name",
             "played",
@@ -70,7 +68,6 @@ class VenuesTable(tables.Table):
     class Meta:
         attrs = TABLE_ATTRS
         model = MatchStatistics
-        template_name = "django_tables2/bootstrap4.html"
         fields = (
             "match__venue__name",
             "played",
@@ -94,7 +91,6 @@ class BowlingTable(tables.Table):
 
     class Meta:
         attrs = TABLE_ATTRS
-        template_name = "django_tables2/bootstrap4.html"
         fields = (
             "player",
             "overs",
@@ -116,5 +112,4 @@ class BattingTable(tables.Table):
 
     class Meta:
         attrs = TABLE_ATTRS
-        template_name = "django_tables2/bootstrap4.html"
         fields = ("player", "scoring", "how_out", "bowler", "runs")

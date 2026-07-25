@@ -91,7 +91,7 @@ class SeasonView(SingleTableMixin, FilterView):
                 loss=loss,
                 abandoned=abandoned,
                 draw=draw,
-                win_percent=ExpressionWrapper(F("won") / F("played"), output_field=FloatField()),
+                win_percent=ExpressionWrapper(F("won") * 100.0 / F("played"), output_field=FloatField()),
             )
             .order_by("-match__season")
         )
@@ -122,7 +122,7 @@ class OppositionView(SingleTableMixin, FilterView):
                 loss=loss,
                 abandoned=abandoned,
                 draw=draw,
-                win_percent=ExpressionWrapper(F("won") / F("played"), output_field=DecimalField()),
+                win_percent=ExpressionWrapper(F("won") * 100.0 / F("played"), output_field=DecimalField()),
             )
             .order_by("-won")
         )
@@ -153,7 +153,7 @@ class VenuesView(SingleTableMixin, FilterView):
                 loss=loss,
                 abandoned=abandoned,
                 draw=draw,
-                win_percent=ExpressionWrapper(F("won") / F("played"), output_field=DecimalField()),
+                win_percent=ExpressionWrapper(F("won") * 100.0 / F("played"), output_field=DecimalField()),
             )
             .order_by("-won")
         )

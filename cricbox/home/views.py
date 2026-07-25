@@ -1,24 +1,51 @@
 from batsman.models import Batsman
 from bowler.models import Bowler
 from cricbox.utils import FIFTIES, FIVERS, HUNDREDS, SITE_URLS
+from match_statistics.models import MatchStatistics
 from player.models import Appointment, Player
 
 from .models import ClubDocument
 from .tables import (
+    BestBowlingTable,
     BestPlayer,
     ClubDocs,
+    DismissalsTable,
+    HighestScoresTable,
     HonoursTable,
     NotablePerformancesTable,
     Scorecard,
+    SeasonAggregateTable,
+    TeamTotalsTable,
     VeteransTable,
 )
 
+from django.db.models import Count, F, Q, Sum, Value
+from django.db.models.functions import Concat
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
 import django_filters
 from django_filters.views import FilterView
 from django_tables2.views import MultiTableMixin, SingleTableMixin
+
+# Non-real "players" (byes/extras, unrecorded names) to keep out of records.
+_REAL_PLAYERS = ~Q(player__first_name__in=["Extras", "Unknown"])
+# how_out values that are not actual dismissals.
+_NON_DISMISSALS = ["Not Out", "Did Not Bat", "Unknown", "Retired Hurt", "Retired Out"]
+
+
+def _season_totals(model, field):
+    """Per-player, per-season Sum(field) rows for the leaderboard tables."""
+    return (
+        model.objects.filter(_REAL_PLAYERS)
+        .values(
+            "player_id",
+            name=Concat("player__first_name", Value(" "), "player__last_name"),
+            season=F("match_statistics__match__season"),
+        )
+        .annotate(total=Sum(field))
+        .order_by("-total")[:10]
+    )
 
 
 # Create your views here.
@@ -219,3 +246,82 @@ class DocumentView(SingleTableMixin, FilterView):
 
     def get_queryset(self):
         return ClubDocument.objects.all()
+
+
+class RecordsView(MultiTableMixin, TemplateView):
+    template_name = "home/records.html"
+    table_pagination = {"per_page": 10}
+
+    def get_tables(self):
+        highest_scores = (
+            Batsman.objects.filter(_REAL_PLAYERS)
+            .select_related("player", "match_statistics__match__opposition")
+            .order_by("-runs")[:10]
+        )
+        best_bowling = (
+            Bowler.objects.filter(_REAL_PLAYERS)
+            .select_related("player", "match_statistics__match__opposition")
+            .order_by("-wickets", "runs")[:10]
+        )
+        team_totals = (
+            MatchStatistics.objects.filter(london_fields_score__isnull=False)
+            .select_related("match__opposition", "match__venue", "result")
+            .order_by("-london_fields_score")[:10]
+        )
+        return [
+            HighestScoresTable(highest_scores),
+            BestBowlingTable(best_bowling),
+            SeasonAggregateTable(_season_totals(Batsman, "runs")),
+            SeasonAggregateTable(_season_totals(Bowler, "wickets")),
+            TeamTotalsTable(team_totals),
+        ]
+
+
+class ClubRecordView(TemplateView):
+    template_name = "home/club_record.html"
+
+    @staticmethod
+    def _summary(queryset):
+        won = queryset.filter(result__name="Won").count()
+        lost = queryset.filter(result__name="Lost").count()
+        drawn = queryset.filter(result__name="Drawn").count()
+        decisive = won + lost + drawn
+        return {
+            "played": queryset.count(),
+            "won": won,
+            "lost": lost,
+            "drawn": drawn,
+            "win_pct": round(won / decisive * 100, 1) if decisive else 0.0,
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        stats = MatchStatistics.objects.all()
+        context["rows"] = [
+            ("Overall", self._summary(stats)),
+            ("Batted first", self._summary(stats.filter(london_fields_first_event=0))),
+            ("Bowled first", self._summary(stats.filter(london_fields_first_event=1))),
+            ("Home", self._summary(stats.filter(match__home_or_away__name="Home"))),
+            ("Away", self._summary(stats.filter(match__home_or_away__name="Away"))),
+        ]
+        return context
+
+
+class DismissalsView(TemplateView):
+    template_name = "home/dismissals.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        rows = list(
+            Batsman.objects.filter(_REAL_PLAYERS)
+            .exclude(how_out__name__in=_NON_DISMISSALS)
+            .values(dismissal=F("how_out__name"))
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )
+        total = sum(row["count"] for row in rows)
+        for row in rows:
+            row["percent"] = f"{(row['count'] / total * 100):.1f}%" if total else "0.0%"
+        context["table"] = DismissalsTable(rows)
+        context["total"] = total
+        return context

@@ -1,0 +1,33 @@
+{% extends "home/base.html" %}
+{% load render_table from django_tables2 %}
+{% block content %}
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">Club Records</h1>
+        <p class="mt-2 text-ink-300">All-time bests from the London Fields CC scorebooks.</p>
+    </div>
+</section>
+
+<div class="container-page space-y-10 py-8">
+    <div>
+        <h2 class="mb-4 text-xl font-bold text-ink-900">Highest Individual Scores</h2>
+        {% render_table tables.0 %}
+    </div>
+    <div>
+        <h2 class="mb-4 text-xl font-bold text-ink-900">Best Bowling Figures</h2>
+        {% render_table tables.1 %}
+    </div>
+    <div>
+        <h2 class="mb-4 text-xl font-bold text-ink-900">Most Runs in a Season</h2>
+        {% render_table tables.2 %}
+    </div>
+    <div>
+        <h2 class="mb-4 text-xl font-bold text-ink-900">Most Wickets in a Season</h2>
+        {% render_table tables.3 %}
+    </div>
+    <div>
+        <h2 class="mb-4 text-xl font-bold text-ink-900">Highest Team Totals</h2>
+        {% render_table tables.4 %}
+    </div>
+</div>
+{% endblock content %}

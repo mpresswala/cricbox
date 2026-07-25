@@ -65,6 +65,11 @@ class Bowler(models.Model):
         db_table = "bowlers"
 
     @property
+    def figures(self):
+        """Bowling figures for the innings, e.g. '8/11' (wickets/runs)."""
+        return f"{self.wickets}/{self.runs}"
+
+    @property
     def average(self):
         """
         Returns the bowler's average per match.

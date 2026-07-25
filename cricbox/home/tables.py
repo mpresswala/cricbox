@@ -1,3 +1,4 @@
+from cricbox.tables import OversColumn
 from cricbox.utils import TABLE_ATTRS
 from player.models import Player
 
@@ -60,3 +61,61 @@ class ClubDocs(tables.Table):
 
     class Meta:
         attrs = TABLE_ATTRS
+
+
+class HighestScoresTable(tables.Table):
+    player = tables.Column(linkify=("player-profile", [tables.A("player_id")]))
+    runs = tables.Column(verbose_name="Score")
+    how_out = tables.Column(verbose_name="How Out")
+    opposition = tables.Column(accessor="match_statistics__match__opposition", verbose_name="Opposition")
+    season = tables.Column(accessor="match_statistics__match__season", verbose_name="Season")
+
+    class Meta:
+        attrs = TABLE_ATTRS
+        orderable = False
+
+
+class BestBowlingTable(tables.Table):
+    player = tables.Column(linkify=("player-profile", [tables.A("player_id")]))
+    figures = tables.Column(verbose_name="Figures", order_by=("-wickets", "runs"))
+    overs = OversColumn(verbose_name="Overs")
+    opposition = tables.Column(accessor="match_statistics__match__opposition", verbose_name="Opposition")
+    season = tables.Column(accessor="match_statistics__match__season", verbose_name="Season")
+
+    class Meta:
+        attrs = TABLE_ATTRS
+        orderable = False
+
+
+class SeasonAggregateTable(tables.Table):
+    """Shared shape for 'most runs/wickets in a season' (dict rows)."""
+
+    name = tables.Column(linkify=("player-profile", [tables.A("player_id")]), verbose_name="Player")
+    season = tables.Column(verbose_name="Season")
+    total = tables.Column(verbose_name="Total")
+
+    class Meta:
+        attrs = TABLE_ATTRS
+        orderable = False
+
+
+class TeamTotalsTable(tables.Table):
+    london_fields_score = tables.Column(verbose_name="Total")
+    result = tables.Column(verbose_name="Result")
+    opposition = tables.Column(accessor="match__opposition", verbose_name="Opposition")
+    venue = tables.Column(accessor="match__venue", verbose_name="Venue")
+    season = tables.Column(accessor="match__season", verbose_name="Season")
+
+    class Meta:
+        attrs = TABLE_ATTRS
+        orderable = False
+
+
+class DismissalsTable(tables.Table):
+    dismissal = tables.Column(verbose_name="Dismissal")
+    count = tables.Column(verbose_name="Count")
+    percent = tables.Column(verbose_name="% of dismissals")
+
+    class Meta:
+        attrs = TABLE_ATTRS
+        orderable = False

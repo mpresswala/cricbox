@@ -1,0 +1,14 @@
+{% extends "home/base.html" %}
+{% load render_table from django_tables2 %}
+{% block content %}
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">How We Get Out</h1>
+        <p class="mt-2 text-ink-300">Dismissal breakdown across {{ total }} recorded dismissals.</p>
+    </div>
+</section>
+
+<div class="container-page py-8">
+    {% render_table table %}
+</div>
+{% endblock content %}

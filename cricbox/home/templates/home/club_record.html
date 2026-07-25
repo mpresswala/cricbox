@@ -1,0 +1,34 @@
+{% extends "home/base.html" %}
+{% block content %}
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">Results Record</h1>
+        <p class="mt-2 text-ink-300">Win/loss record overall and by situation.</p>
+    </div>
+</section>
+
+<div class="container-page py-8">
+    <div class="overflow-x-auto rounded-xl border border-ink-100 bg-white shadow-sm">
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Split</th><th>Played</th><th>Won</th><th>Lost</th><th>Drawn</th><th>Win %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for label, s in rows %}
+                <tr>
+                    <td class="font-medium">{{ label }}</td>
+                    <td>{{ s.played }}</td>
+                    <td>{{ s.won }}</td>
+                    <td>{{ s.lost }}</td>
+                    <td>{{ s.drawn }}</td>
+                    <td>{{ s.win_pct }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="mt-3 text-sm text-ink-500">Win % is wins as a share of decisive games (won + lost + drawn).</p>
+</div>
+{% endblock content %}
