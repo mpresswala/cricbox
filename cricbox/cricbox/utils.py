@@ -32,6 +32,7 @@ def balls_to_overs(balls):
     overs, remaining = divmod(int(balls), BALLS_PER_OVER)
     return overs if remaining == 0 else Decimal(f"{overs}.{remaining}")
 
+
 FIFTIES = Q(Q(runs__gt=49), Q(runs__lte=99))
 HUNDREDS = Q(runs__gt=99)
 FIVERS = Q(Q(wickets__gt=4))

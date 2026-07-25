@@ -58,12 +58,23 @@ class PageSmokeTests(TestCase):
 # order_by on a column raises a FieldError (500), so exercise them all.
 SORTABLE_COLUMNS = {
     "batsmen-stats": [
-        "player_full_name", "innings", "runs_scored", "not_out",
-        "highest", "average", "fifties", "hundreds",
+        "player_full_name",
+        "innings",
+        "runs_scored",
+        "not_out",
+        "highest",
+        "average",
+        "fifties",
+        "hundreds",
     ],
     "bowling-stats-all": [
-        "overs", "maidens", "runs", "total_wickets",
-        "average", "strike_rate", "economy",
+        "overs",
+        "maidens",
+        "runs",
+        "total_wickets",
+        "average",
+        "strike_rate",
+        "economy",
     ],
 }
 
@@ -78,6 +89,7 @@ class TableSortingTests(TestCase):
                 with self.subTest(url_name=name, column=column):
                     response = self.client.get(base, {"sort": column})
                     self.assertLess(
-                        response.status_code, 500,
+                        response.status_code,
+                        500,
                         msg=f"{name}?sort={column} returned {response.status_code}",
                     )

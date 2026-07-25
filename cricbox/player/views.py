@@ -17,8 +17,8 @@ import django_filters
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-
 # Create your views here.
+
 
 class PlayersFilter(django_filters.FilterSet):
     class Meta:

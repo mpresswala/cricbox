@@ -1,10 +1,10 @@
+# Third-party imports
+from unfold.admin import ModelAdmin
+
 from .models import Opposition
 
 # Django imports
 from django.contrib import admin
-
-# Third-party imports
-from unfold.admin import ModelAdmin
 
 
 # Register your models here.

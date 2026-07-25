@@ -1,3 +1,6 @@
+# Third-party imports
+from unfold.admin import ModelAdmin
+
 from .models import (
     Appointment,
     AppointmentType,
@@ -9,9 +12,6 @@ from .models import (
 
 # Django imports
 from django.contrib import admin
-
-# Third-party imports
-from unfold.admin import ModelAdmin
 
 
 # Register your models here.
@@ -39,7 +39,7 @@ class PlayerAdmin(ModelAdmin):
         "playing_role",
         "batting_style",
         "bowling_style",
-        "life_member"
+        "life_member",
     ]
     search_fields = ["first_name", "last_name"]
     list_filter = ["playing_role", "batting_style", "bowling_style", "life_member"]

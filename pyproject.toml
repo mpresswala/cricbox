@@ -32,42 +32,39 @@ mysql = [
 
 [dependency-groups]
 dev = [
-    "black>=24.0",
-    "flake8>=7.0",
-    "isort>=5.13",
+    "ruff>=0.9",
 ]
 
 # cricbox is an application, not a distributable package.
 [tool.uv]
 package = false
 
-[tool.isort]
-profile = 'black'
-skip_gitignore = true
-sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER', "DJANGO", "DJANGO_APPS"]
-known_django = ["django"]
-known_django_apps = ["django_tables2", "django_filters"]
-known_first_party = ["bowler", "batsman", "match", "match_statistics", "cricbox", "home", "opposition", "player", "venue"]
-import_heading_stdlib = "Standard imports"
-import_heading_django = "Django imports"
-import_heading_django_apps = "Django third party apps"
-import_heading_firstparty = "Cricbox imports"
-import_heading_thirdparty = "Third-party imports"
-skip_glob = "**/migrations/*"
-
-[tool.black]
+[tool.ruff]
 line-length = 119
-target-version = ['py312']
-include = '\.pyi?$'
-extend-exclude = '''
-(
-  /(
-      \.eggs
-    | \.git
-    | \.venv
-    | build
-    | dist
-    | migrations
-  )/
-)
-'''
+target-version = "py312"
+extend-exclude = ["**/migrations/*"]
+
+[tool.ruff.lint]
+# pycodestyle (E/W), pyflakes (F), isort (I) and mccabe complexity (C90),
+# mirroring the previous flake8 + isort setup.
+select = ["E", "W", "F", "I", "C90"]
+# E203 (whitespace before punctuation) conflicts with the formatter, as W503
+# did under flake8.
+ignore = ["E203"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "bowler", "batsman", "match", "match_statistics",
+    "cricbox", "home", "opposition", "player", "venue",
+]
+section-order = [
+    "future", "standard-library", "third-party",
+    "first-party", "local-folder", "django", "django-apps",
+]
+
+[tool.ruff.lint.isort.sections]
+"django" = ["django"]
+"django-apps" = ["django_tables2", "django_filters"]

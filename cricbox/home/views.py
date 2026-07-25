@@ -1,5 +1,4 @@
 # Standard imports
-import datetime
 
 # Cricbox imports
 from batsman.models import Batsman
@@ -161,7 +160,8 @@ class PerformersView(MultiTableMixin, TemplateView):
                 GROUP BY season
             ) AS max_per_season
             inner join batsmen_all_seasons
-                ON batsmen_all_seasons.season = max_per_season.season AND max_per_season.max_total = batsmen_all_seasons.total
+                ON batsmen_all_seasons.season = max_per_season.season
+                AND max_per_season.max_total = batsmen_all_seasons.total
         ORDER BY batsmen_all_seasons.season DESC;
     """
 
@@ -173,7 +173,8 @@ class PerformersView(MultiTableMixin, TemplateView):
                 GROUP BY season
             ) AS max_per_season
             inner join bowler_all_seasons
-                ON bowler_all_seasons.season = max_per_season.season and max_per_season.max_total = bowler_all_seasons.total
+                ON bowler_all_seasons.season = max_per_season.season
+                AND max_per_season.max_total = bowler_all_seasons.total
         ORDER BY bowler_all_seasons.season DESC;
     """
 

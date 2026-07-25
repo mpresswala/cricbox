@@ -15,9 +15,7 @@ class SeasonTable(tables.Table):
     loss = tables.Column(verbose_name="L")
     abandoned = tables.Column(verbose_name="A")
     win_percent = FloatColumn(verbose_name="%")
-    match__season = tables.TemplateColumn(
-        f'<a href="{{% url "fixtures-overview" %}}?season={{{{ value }}}}">{{{{ value }}}}</a>'
-    )
+    match__season = tables.TemplateColumn('<a href="{% url "fixtures-overview" %}?season={{ value }}">{{ value }}</a>')
 
     class Meta:
         attrs = TABLE_ATTRS
@@ -42,7 +40,7 @@ class OppositionTable(tables.Table):
     abandoned = tables.Column(verbose_name="A")
     win_percent = FloatColumn(verbose_name="%")
     match__opposition__name = tables.TemplateColumn(
-        f'<a href="{{% url "fixtures-overview" %}}?opposition={{{{ record.match__opposition_id }}}}">{{{{ value }}}}</a>'
+        '<a href="{% url "fixtures-overview" %}?opposition={{ record.match__opposition_id }}">{{ value }}</a>'
     )
 
     class Meta:
@@ -68,7 +66,7 @@ class VenuesTable(tables.Table):
     abandoned = tables.Column(verbose_name="A")
     win_percent = FloatColumn(verbose_name="%")
     match__venue__name = tables.TemplateColumn(
-        f'<a href="{{% url "fixtures-overview" %}}?venue={{{{ record.match__venue_id }}}}">{{{{ value }}}}</a>'
+        '<a href="{% url "fixtures-overview" %}?venue={{ record.match__venue_id }}">{{ value }}</a>'
     )
 
     class Meta:

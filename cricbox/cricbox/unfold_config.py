@@ -49,9 +49,7 @@ UNFOLD = {
                     {
                         "title": _("Match statistics"),
                         "icon": "scoreboard",
-                        "link": reverse_lazy(
-                            "admin:match_statistics_matchstatistics_changelist"
-                        ),
+                        "link": reverse_lazy("admin:match_statistics_matchstatistics_changelist"),
                     },
                     {
                         "title": _("Players"),
@@ -61,9 +59,7 @@ UNFOLD = {
                     {
                         "title": _("Oppositions"),
                         "icon": "shield",
-                        "link": reverse_lazy(
-                            "admin:opposition_opposition_changelist"
-                        ),
+                        "link": reverse_lazy("admin:opposition_opposition_changelist"),
                     },
                     {
                         "title": _("Venues"),

@@ -1,5 +1,5 @@
 # Cricbox imports
-from cricbox.tables import CareerOversColumn, FloatColumn, OversColumn, SummingColumn, SummingOversColumn
+from cricbox.tables import CareerOversColumn, FloatColumn, SummingColumn, SummingOversColumn
 from cricbox.utils import TABLE_ATTRS
 
 # Django third party apps
@@ -11,7 +11,9 @@ class BowlersTable(tables.Table):
         linkify=("player-profile", [tables.A("player_id")]),
         verbose_name="Player",
     )
-    overs = CareerOversColumn(accessor="total_balls", order_by=("total_balls", "player_full_name"), verbose_name="Overs")
+    overs = CareerOversColumn(
+        accessor="total_balls", order_by=("total_balls", "player_full_name"), verbose_name="Overs"
+    )
     maidens = tables.Column(order_by=("maidens", "player_full_name"), verbose_name="Md")
     runs = tables.Column(order_by=("runs", "player_full_name"))
     total_wickets = tables.Column(order_by=("total_wickets", "player_full_name"), verbose_name="Wkts")

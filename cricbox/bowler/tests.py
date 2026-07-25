@@ -21,8 +21,13 @@ class BowlerStatPropertyTests(TestCase):
 
     def _bowler(self, **kwargs):
         defaults = dict(
-            number=1, player=self.player, overs=5, maidens=0, runs=20,
-            wickets=2, match_statistics=self.match_statistics,
+            number=1,
+            player=self.player,
+            overs=5,
+            maidens=0,
+            runs=20,
+            wickets=2,
+            match_statistics=self.match_statistics,
         )
         defaults.update(kwargs)
         return Bowler.objects.create(**defaults)
@@ -47,4 +52,4 @@ class BowlerStatPropertyTests(TestCase):
         # runs/overs where overs == balls / 6.
         bowler = self._bowler(overs="4.3", runs=27, wickets=3)
         self.assertEqual(bowler.strike_rate, 9)  # 27 balls / 3
-        self.assertEqual(bowler.economy, 6)      # 27 runs / (27/6 overs)
+        self.assertEqual(bowler.economy, 6)  # 27 runs / (27/6 overs)

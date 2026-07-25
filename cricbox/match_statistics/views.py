@@ -20,7 +20,6 @@ from django_tables2.views import SingleTableMixin
 
 # Create your views here.
 class OppositionFilter(django_filters.FilterSet):
-
     season = django_filters.RangeFilter(field_name="match__season")
 
     class Meta:
@@ -39,7 +38,6 @@ class OppositionFilter(django_filters.FilterSet):
 
 
 class VenueFilter(django_filters.FilterSet):
-
     season = django_filters.RangeFilter(field_name="match__season")
 
     class Meta:

@@ -1,9 +1,10 @@
 # Cricbox imports
 from cricbox.utils import TABLE_ATTRS
+from player.models import Player
 
 # Django third party apps
 import django_tables2 as tables
-from player.models import Player
+
 
 class Scorecard(tables.Table):
     name = tables.Column(orderable=False)
