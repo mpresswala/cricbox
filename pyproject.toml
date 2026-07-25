@@ -26,15 +26,10 @@ Repository = "https://github.com/muffizone/cricbox"
 #   uv sync --extra mysql
 # Local development uses SQLite (cricbox.settings_local) and needs neither.
 [project.optional-dependencies]
-mysql = [
-    "mysqlclient>=2.2",
-    "mysql-connector-python>=9.0",
-]
+mysql = ["mysqlclient>=2.2", "mysql-connector-python>=9.0"]
 
 [dependency-groups]
-dev = [
-    "ruff>=0.9",
-]
+dev = ["ruff>=0.9"]
 
 # cricbox is an application, not a distributable package.
 [tool.uv]
@@ -58,12 +53,24 @@ max-complexity = 10
 
 [tool.ruff.lint.isort]
 known-first-party = [
-    "bowler", "batsman", "match", "match_statistics",
-    "cricbox", "home", "opposition", "player", "venue",
+    "bowler",
+    "batsman",
+    "match",
+    "match_statistics",
+    "cricbox",
+    "home",
+    "opposition",
+    "player",
+    "venue",
 ]
 section-order = [
-    "future", "standard-library", "third-party",
-    "first-party", "local-folder", "django", "django-apps",
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+    "django",
+    "django-apps",
 ]
 
 [tool.ruff.lint.isort.sections]
