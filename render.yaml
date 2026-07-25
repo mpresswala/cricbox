@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: cricbox
+    runtime: docker
+    plan: starter # Starter supports persistent disks
+    region: frankfurt # pick the region closest to your members
+    branch: modernize-frontend
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: cricbox.settings_render
+      - key: DJANGO_SECRET_KEY
+        generateValue: true # Render generates and stores a secret
+      - key: DJANGO_DATA_DIR
+        value: /var/data
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false # set your custom domain(s) in the dashboard
+      # Litestream continuous backup — set these to your S3/B2 bucket + keys.
+      - key: LITESTREAM_BUCKET
+        sync: false
+      - key: LITESTREAM_ENDPOINT
+        sync: false # e.g. https://s3.us-west-004.backblazeb2.com (blank for AWS S3)
+      - key: LITESTREAM_REGION
+        sync: false
+      - key: LITESTREAM_ACCESS_KEY_ID
+        sync: false
+      - key: LITESTREAM_SECRET_ACCESS_KEY
+        sync: false
+    disk:
+      name: cricbox-data
+      mountPath: /var/data
+      sizeGB: 1

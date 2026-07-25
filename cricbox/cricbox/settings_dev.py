@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-# Standard imports
 import os
 from pathlib import Path
 
@@ -41,6 +40,9 @@ INSTALLED_APPS = [
     "venue.apps.VenueConfig",
     "match.apps.MatchConfig",
     "opposition.apps.OppositionConfig",
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -49,7 +51,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_tables2",
     "django_filters",
-    "django_forms_bootstrap",
     "bootstrap4",
 ]
 
@@ -89,10 +90,10 @@ WSGI_APPLICATION = "cricbox.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "london_fields",
-        "HOST": "192.168.200.103",
-        "USER": "django",
-        "PASSWORD": "Wz4vK36!DSeh%N",
+        "NAME": os.environ.get("DJANGO_DB_DATABASE", "london_fields"),
+        "HOST": os.environ.get("DJANGO_DB_HOSTNAME", "127.0.0.1"),
+        "USER": os.environ.get("DJANGO_DB_USERNAME", "django"),
+        "PASSWORD": os.environ.get("DJANGO_DB_PASSWORD", ""),
     }
 }
 
@@ -141,6 +142,9 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+DJANGO_TABLES2_TEMPLATE = "django_tables2/tailwind.html"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# django-unfold admin theme
+from cricbox.unfold_config import UNFOLD  # noqa: E402,F401

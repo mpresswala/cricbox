@@ -1,9 +1,7 @@
-# Cricbox imports
 from cricbox.utils import FIFTIES, HUNDREDS
 from match_statistics.models import MatchStatistics
 from player.models import Player
 
-# Django imports
 from django.db import models
 from django.db.models import (
     Count,
@@ -29,7 +27,9 @@ class Statistics(models.Manager):
                 player_full_name=Concat("player__first_name", Value(" "), "player__last_name"),
             )
             .annotate(
-                innings=Count("match_statistics") - Count("how_out", filter=Q(how_out__name="Did Not Bat")) - Count("how_out", filter=Q(how_out__name="Unknown")) ,
+                innings=Count("match_statistics")
+                - Count("how_out", filter=Q(how_out__name="Did Not Bat"))
+                - Count("how_out", filter=Q(how_out__name="Unknown")),
                 runs_scored=Sum("runs"),
                 not_out=Count("how_out", filter=Q(how_out__name="Not Out")),
                 highest=Max("runs"),
@@ -57,8 +57,8 @@ class WicketType(models.Model):
 class Batsman(models.Model):
     player = models.ForeignKey(Player, on_delete=models.PROTECT)
     scoring = models.CharField("Scoring", blank=True, max_length=200)
-    runs = models.PositiveIntegerField("Runs", blank=True)
-    how_out = models.ForeignKey(WicketType, blank=True, on_delete=models.PROTECT)
+    runs = models.PositiveIntegerField("Runs")
+    how_out = models.ForeignKey(WicketType, on_delete=models.PROTECT)
     bowler = models.CharField("Bowler", blank=True, max_length=25)
 
     match_statistics = models.ForeignKey(MatchStatistics, on_delete=models.PROTECT)

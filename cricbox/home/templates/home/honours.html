@@ -1,107 +1,51 @@
 {% extends "home/base.html" %}
+{% load render_table from django_tables2 %}
 {% block content %}
-    <section id="portfolio" class="portfolio">
-        <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                {% load render_table from django_tables2 %}
-                <h1>Honours Board</h1>
-                <br/>
-                <h2>Club Positions</h2>
-                <hr/>
-                <div>
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active show" data-toggle="tab" href="#captains">Captains</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#vice-captains">Vice-Captains</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#midweek-captains">Midweek Captains</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#fixture-secretaries">Fixture Secretaries</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                           aria-haspopup="true" aria-expanded="false">Tour Czars</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#domestic">Domestic</a>
-                            <a class="dropdown-item" href="#international">International</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#veterans">Life Members</a>
-                    </li>
-                </ul>
-                <div id="myTabContent" class="tab-content">
-                    <div class="tab-pane active show" id="captains">
-                        {% render_table tables.0 %}
-                    </div>
-                    <div class="tab-pane fade" id="vice-captains">
-                        {% render_table tables.1 %}
-                    </div>
-                    <div class="tab-pane fade" id="midweek-captains">
-                        {% render_table tables.2 %}
-                    </div>
-                    <div class="tab-pane fade" id="fixture-secretaries">
-                        {% render_table tables.3 %}
-                    </div>
-                    <div class="tab-pane fade" id="domestic">
-                        {% render_table tables.4 %}
-                    </div>
-                    <div class="tab-pane fade" id="international">
-                        {% render_table tables.5 %}
-                    </div>
-                    <div class="tab-pane fade" id="veterans">
-                        {% render_table tables.6 %}
-                    </div>
-                </div>
-                </div>
-                <br/>
-                <hr/>
-                <br/>
-                <h2>Notable Performances</h2>
-                <div>
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#50s">50s</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#centurions">100s</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#five-wicket-hauls">5w</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#best-batsman">Top Scorer</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#best-bowler">Top Wicket Taker</a>
-                    </li>
-                </ul>
-                <div id="myTabContent" class="tab-content">
-                    <div class="tab-pane fade active show" id="50s">
-                        {% render_table tables.7 %}
-                    </div>
-                    <div class="tab-pane fade" id="centurions">
-                        {% render_table tables.8 %}
-                    </div>
-                    <div class="tab-pane fade" id="five-wicket-hauls">
-                        {% render_table tables.9 %}
-                    </div>
-                    <div class="tab-pane fade" id="best-batsman">
-                        {% render_table tables.10 %}
-                    </div>
-                    <div class="tab-pane fade" id="best-bowler">
-                        {% render_table tables.11 %}
-                    </div>
-                </div>
-                </div>
-                <br/>
-                <br/>
-                <hr/>
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">Honours Board</h1>
+    </div>
+</section>
+
+<div class="container-page space-y-12 py-8">
+    <div>
+        <h2 class="mb-4 text-xl font-bold text-ink-900">Club Positions</h2>
+        <div x-data="{ tab: 0 }">
+            <div class="mb-6 flex flex-wrap border-b border-ink-200">
+                <button @click="tab=0" :class="tab===0 ? 'tab-btn tab-btn-active' : 'tab-btn'">Captains</button>
+                <button @click="tab=1" :class="tab===1 ? 'tab-btn tab-btn-active' : 'tab-btn'">Vice-Captains</button>
+                <button @click="tab=2" :class="tab===2 ? 'tab-btn tab-btn-active' : 'tab-btn'">Midweek Captains</button>
+                <button @click="tab=3" :class="tab===3 ? 'tab-btn tab-btn-active' : 'tab-btn'">Fixture Secretaries</button>
+                <button @click="tab=4" :class="tab===4 ? 'tab-btn tab-btn-active' : 'tab-btn'">Domestic Tour Czars</button>
+                <button @click="tab=5" :class="tab===5 ? 'tab-btn tab-btn-active' : 'tab-btn'">International Tour Czars</button>
+                <button @click="tab=6" :class="tab===6 ? 'tab-btn tab-btn-active' : 'tab-btn'">Life Members</button>
             </div>
+            <div x-show="tab===0">{% render_table tables.0 %}</div>
+            <div x-show="tab===1" x-cloak>{% render_table tables.1 %}</div>
+            <div x-show="tab===2" x-cloak>{% render_table tables.2 %}</div>
+            <div x-show="tab===3" x-cloak>{% render_table tables.3 %}</div>
+            <div x-show="tab===4" x-cloak>{% render_table tables.4 %}</div>
+            <div x-show="tab===5" x-cloak>{% render_table tables.5 %}</div>
+            <div x-show="tab===6" x-cloak>{% render_table tables.6 %}</div>
         </div>
-    </section>
+    </div>
+
+    <div>
+        <h2 class="mb-4 text-xl font-bold text-ink-900">Notable Performances</h2>
+        <div x-data="{ tab: 0 }">
+            <div class="mb-6 flex flex-wrap border-b border-ink-200">
+                <button @click="tab=0" :class="tab===0 ? 'tab-btn tab-btn-active' : 'tab-btn'">50s</button>
+                <button @click="tab=1" :class="tab===1 ? 'tab-btn tab-btn-active' : 'tab-btn'">100s</button>
+                <button @click="tab=2" :class="tab===2 ? 'tab-btn tab-btn-active' : 'tab-btn'">5 Wickets</button>
+                <button @click="tab=3" :class="tab===3 ? 'tab-btn tab-btn-active' : 'tab-btn'">Top Scorer</button>
+                <button @click="tab=4" :class="tab===4 ? 'tab-btn tab-btn-active' : 'tab-btn'">Top Wicket Taker</button>
+            </div>
+            <div x-show="tab===0">{% render_table tables.7 %}</div>
+            <div x-show="tab===1" x-cloak>{% render_table tables.8 %}</div>
+            <div x-show="tab===2" x-cloak>{% render_table tables.9 %}</div>
+            <div x-show="tab===3" x-cloak>{% render_table tables.10 %}</div>
+            <div x-show="tab===4" x-cloak>{% render_table tables.11 %}</div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

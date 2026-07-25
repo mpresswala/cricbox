@@ -1,6 +1,5 @@
 from .views import BowlersView, BowlerView
 
-# Django imports
 from django.urls import path
 
 urlpatterns = [

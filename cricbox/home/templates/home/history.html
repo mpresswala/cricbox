@@ -1,8 +1,14 @@
 {% extends "home/base.html" %}
 {% load render_table from django_tables2 %}
 {% block content %}
-    <section id="about" class="about">
-        <div class="container">
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">Club History</h1>
+    </div>
+</section>
+
+<div class="container-page py-8">
+    <div class="content-prose max-w-3xl">
             <p>This page shows the history of London Fields Cricket Club. You can also check out the <a
                     href="{% url 'site-positions' %}">Positions Board</a> and the <a href="{% url 'site-performers' %}">
                 Performers Board</a> for more in-depth look at the club.</p>
@@ -89,6 +95,6 @@
             </P>
             <P>The New Mermaid (which no longer exists) was previously at 364, Mare Street (in the Narroway). It was
                 built in the 1740s and demolished in the 1840s.</P>
-        </div>
-    </section><!-- End About Section -->
+    </div>
+</div>
 {% endblock content %}

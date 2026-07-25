@@ -1,10 +1,8 @@
-# Cricbox imports
 from cricbox.tables import FloatColumn, SummingColumn
 from cricbox.utils import TABLE_ATTRS
 
 from .models import MatchStatistics
 
-# Django third party apps
 import django_tables2 as tables
 
 
@@ -15,14 +13,11 @@ class SeasonTable(tables.Table):
     loss = tables.Column(verbose_name="L")
     abandoned = tables.Column(verbose_name="A")
     win_percent = FloatColumn(verbose_name="%")
-    match__season = tables.TemplateColumn(
-        f'<a href="{{% url "fixtures-overview" %}}?season={{{{ value }}}}">{{{{ value }}}}</a>'
-    )
+    match__season = tables.TemplateColumn('<a href="{% url "fixtures-overview" %}?season={{ value }}">{{ value }}</a>')
 
     class Meta:
         attrs = TABLE_ATTRS
         model = MatchStatistics
-        template_name = "django_tables2/bootstrap4.html"
         fields = (
             "match__season",
             "played",
@@ -42,13 +37,12 @@ class OppositionTable(tables.Table):
     abandoned = tables.Column(verbose_name="A")
     win_percent = FloatColumn(verbose_name="%")
     match__opposition__name = tables.TemplateColumn(
-        f'<a href="{{% url "fixtures-overview" %}}?opposition={{{{ record.match__opposition_id }}}}">{{{{ value }}}}</a>'
+        '<a href="{% url "fixtures-overview" %}?opposition={{ record.match__opposition_id }}">{{ value }}</a>'
     )
 
     class Meta:
         attrs = TABLE_ATTRS
         model = MatchStatistics
-        template_name = "django_tables2/bootstrap4.html"
         fields = (
             "match__opposition__name",
             "played",
@@ -68,13 +62,12 @@ class VenuesTable(tables.Table):
     abandoned = tables.Column(verbose_name="A")
     win_percent = FloatColumn(verbose_name="%")
     match__venue__name = tables.TemplateColumn(
-        f'<a href="{{% url "fixtures-overview" %}}?venue={{{{ record.match__venue_id }}}}">{{{{ value }}}}</a>'
+        '<a href="{% url "fixtures-overview" %}?venue={{ record.match__venue_id }}">{{ value }}</a>'
     )
 
     class Meta:
         attrs = TABLE_ATTRS
         model = MatchStatistics
-        template_name = "django_tables2/bootstrap4.html"
         fields = (
             "match__venue__name",
             "played",
@@ -98,7 +91,6 @@ class BowlingTable(tables.Table):
 
     class Meta:
         attrs = TABLE_ATTRS
-        template_name = "django_tables2/bootstrap4.html"
         fields = (
             "player",
             "overs",
@@ -120,5 +112,4 @@ class BattingTable(tables.Table):
 
     class Meta:
         attrs = TABLE_ATTRS
-        template_name = "django_tables2/bootstrap4.html"
         fields = ("player", "scoring", "how_out", "bowler", "runs")

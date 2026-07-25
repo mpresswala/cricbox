@@ -1,40 +1,49 @@
-# Cricbox imports
+from cricbox.utils import BALLS_PER_OVER, overs_to_balls
 from match_statistics.models import MatchStatistics
 from player.models import Player
 
-# Django imports
 from django.db import models
-from django.db.models import Count, DecimalField, ExpressionWrapper, F, Q, Sum, Value
-from django.db.models.functions import Concat
+from django.db.models import Count, DecimalField, ExpressionWrapper, F, IntegerField, Q, Sum, Value
+from django.db.models.functions import Concat, Floor, NullIf
 
 
 # class based model manager
 class Statistics(models.Manager):
     def get_queryset(self):
+        # Overs are base-6 (4.3 == 4 overs 3 balls), so they cannot be summed as
+        # decimals. Convert each innings to balls, total those, and derive the
+        # bowling figures from the ball count.
+        balls = ExpressionWrapper(
+            Floor(F("overs")) * BALLS_PER_OVER + (F("overs") - Floor(F("overs"))) * 10,
+            output_field=IntegerField(),
+        )
         return (
             super()
             .get_queryset()
+            .exclude(player__first_name="Extras")
             .values("player_id", player_full_name=Concat("player__first_name", Value(" "), "player__last_name"))
             .annotate(
-                overs=Sum("overs"),
+                total_balls=Sum(balls),
                 maidens=Sum("maidens"),
                 runs=Sum("runs"),
                 total_wickets=Sum("wickets"),
-                average=ExpressionWrapper(
-                    F("runs") / F("total_wickets"),
-                    output_field=DecimalField(max_digits=2, decimal_places=2),
-                ),
-                strike_rate=ExpressionWrapper(
-                    F("overs") * 6 / F("total_wickets"),
-                    output_field=DecimalField(max_digits=2, decimal_places=2),
-                ),
-                economy=ExpressionWrapper(
-                    F("runs") / F("overs"),
-                    output_field=DecimalField(max_digits=2, decimal_places=2),
-                ),
                 matches=Count("match_statistics"),
                 fours=Count("wickets", Q(wickets=4)),
                 fives=Count("wickets", Q(wickets__gt=4)),
+            )
+            .annotate(
+                average=ExpressionWrapper(
+                    F("runs") / NullIf(F("total_wickets"), 0),
+                    output_field=DecimalField(max_digits=6, decimal_places=2),
+                ),
+                strike_rate=ExpressionWrapper(
+                    F("total_balls") * Value(1.0) / NullIf(F("total_wickets"), 0),
+                    output_field=DecimalField(max_digits=6, decimal_places=2),
+                ),
+                economy=ExpressionWrapper(
+                    F("runs") * Value(float(BALLS_PER_OVER)) / NullIf(F("total_balls"), 0),
+                    output_field=DecimalField(max_digits=6, decimal_places=2),
+                ),
             )
             .order_by("-total_wickets")
         )
@@ -56,28 +65,40 @@ class Bowler(models.Model):
         db_table = "bowlers"
 
     @property
+    def figures(self):
+        """Bowling figures for the innings, e.g. '8/11' (wickets/runs)."""
+        return f"{self.wickets}/{self.runs}"
+
+    @property
     def average(self):
         """
         Returns the bowler's average per match.
-        :return: float
+        :return: float or None when no wickets were taken
         """
+        if not self.wickets:
+            return None
         return round(self.runs / self.wickets, 2)
 
     @property
     def strike_rate(self):
         """
-        Returns the bowler's strike rate per match.
-        :return: float
+        Returns the bowler's strike rate (balls per wicket).
+        :return: float or None when no wickets were taken
         """
-        return round(self.overs * 6 / self.wickets, 2)
+        if not self.wickets:
+            return None
+        return round(overs_to_balls(self.overs) / self.wickets, 2)
 
     @property
     def economy(self):
         """
-        Returns the bowler's economy rate per match.
-        :return: float
+        Returns the bowler's economy rate (runs per over).
+        :return: float or None when no overs were bowled
         """
-        return round(self.runs / self.overs, 2)
+        balls = overs_to_balls(self.overs)
+        if not balls:
+            return None
+        return round(self.runs / (balls / BALLS_PER_OVER), 2)
 
     def __str__(self):
         return self.player.full_name()

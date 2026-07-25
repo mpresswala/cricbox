@@ -1,9 +1,7 @@
-# Cricbox imports
 from match.models import Match
 
 from .choices import EVENT_FIRST
 
-# Django imports
 from django.db import models
 
 
@@ -33,7 +31,7 @@ class MatchStatistics(models.Model):
     report_headline = models.CharField(max_length=200, null=True)
 
     def get_bowlers(self):
-        return self.bowler_set.get_queryset().order_by('number')
+        return self.bowler_set.get_queryset().order_by("number")
 
     def get_batsman(self):
         return self.batsman_set.get_queryset()

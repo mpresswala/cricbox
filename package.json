@@ -1,0 +1,19 @@
+{
+  "name": "cricbox-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend build tooling (Tailwind CSS) for the cricbox public site",
+  "scripts": {
+    "build:css": "tailwindcss -i ./cricbox/home/styles/tailwind.css -o ./cricbox/home/static/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./cricbox/home/styles/tailwind.css -o ./cricbox/home/static/css/tailwind.css --watch",
+    "vendor": "mkdir -p cricbox/home/static/vendor && cp node_modules/alpinejs/dist/cdn.min.js cricbox/home/static/vendor/alpine.min.js && cp node_modules/htmx.org/dist/htmx.min.js cricbox/home/static/vendor/htmx.min.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "tailwindcss": "^4.0.0"
+  },
+  "dependencies": {
+    "alpinejs": "^3.14.0",
+    "htmx.org": "^2.0.0"
+  }
+}

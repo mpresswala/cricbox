@@ -1,12 +1,9 @@
-# Standard imports
 import datetime
 
-# Cricbox imports
 from opposition.models import Opposition
 from player.models import Player
 from venue.models import Venue
 
-# Django imports
 from django.db import models
 
 

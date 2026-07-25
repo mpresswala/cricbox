@@ -1,72 +1,71 @@
-[tool.poetry]
+[project]
 name = "cricbox"
 version = "0.1.2"
 description = "Django project for cricket match statistics, reports, player, venue and opposition"
-authors = ["mufaddal <muffizone@gmail.com>"]
-maintainers = ["mufaddal <muffizone@gmail.com>"]
+authors = [{ name = "mufaddal", email = "muffizone@gmail.com" }]
+maintainers = [{ name = "mufaddal", email = "muffizone@gmail.com" }]
 readme = "README.md"
-homepage = "https://github.com/muffizone/cricbox"
-repository = "https://github.com/muffizone/cricbox"
-documentation = "https://github.com/muffizone/cricbox"
-keywords = ["cricket", "django"]
 license = "GPL-3.0-or-later"
+keywords = ["cricket", "django"]
+requires-python = ">=3.12"
+dependencies = [
+    "Django>=6.0,<6.1",
+    "django-tables2>=3.0",
+    "django-filter>=25.1",
+    "django-bootstrap4>=26.1",
+    "django-unfold>=0.101.0",
+    "gunicorn>=23.0",
+    "whitenoise>=6.8",
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-Django = "^3.1.5"
-django-tables2 = "^2.3.4"
-django-filter = "^2.4.0"
-django-forms-bootstrap = "^3.1.0"
-mysql-connector-python = "^8.0.23"
-mysqlclient = "^2.0.3"
-django-bootstrap4 = "^2.3.1"
-sentry-sdk = "^1.0.0"
+[project.urls]
+Homepage = "https://github.com/muffizone/cricbox"
+Repository = "https://github.com/muffizone/cricbox"
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.1"
-black = "^20.8b1"
-flake8 = "^3.8.4"
-tbump = "^6.3.1"
+# Production database drivers. Installed only when needed:
+#   uv sync --extra mysql
+# Local development uses SQLite (cricbox.settings_local) and needs neither.
+[project.optional-dependencies]
+mysql = [
+    "mysqlclient>=2.2",
+    "mysql-connector-python>=9.0",
+]
 
-[tool.isort]
-profile = 'black'
-skip_gitignore = true
-sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER', "DJANGO", "DJANGO_APPS"]
-known_django = ["django"]
-known_django_apps = ["django_tables2", "django_filters"]
-known_first_party = ["bowler", "batsman", "match", "match_statistics", "cricbox", "home", "opposition", "player", "venue"]
-import_heading_stdlib = "Standard imports"
-import_heading_django = "Django imports"
-import_heading_django_apps = "Django third party apps"
-import_heading_firstparty = "Cricbox imports"
-import_heading_thirdparty = "Third-party imports"
-skip_glob= "**/migrations/*"
+[dependency-groups]
+dev = [
+    "ruff>=0.9",
+]
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+# cricbox is an application, not a distributable package.
+[tool.uv]
+package = false
 
-[tool.black]
+[tool.ruff]
 line-length = 119
-target-version = ['py38']
-include = '\.pyi?$'
-exclude = '''
+target-version = "py312"
+extend-exclude = ["**/migrations/*"]
 
-(
-  /(
-      \.eggs         # exclude a few common directories in the
-    | \.git          # root of the project
-    | \.hg
-    | \.mypy_cache
-    | \.tox
-    | \.venv
-    | _build
-    | buck-out
-    | build
-    | dist
-    | .history
-    | migrations
-  )/
-)
-'''
+[tool.ruff.lint]
+# pycodestyle (E/W), pyflakes (F), isort (I) and mccabe complexity (C90),
+# mirroring the previous flake8 + isort setup.
+select = ["E", "W", "F", "I", "C90"]
+# E203 (whitespace before punctuation) conflicts with the formatter, as W503
+# did under flake8.
+ignore = ["E203"]
 
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "bowler", "batsman", "match", "match_statistics",
+    "cricbox", "home", "opposition", "player", "venue",
+]
+section-order = [
+    "future", "standard-library", "third-party",
+    "first-party", "local-folder", "django", "django-apps",
+]
+
+[tool.ruff.lint.isort.sections]
+"django" = ["django"]
+"django-apps" = ["django_tables2", "django_filters"]

@@ -1,29 +1,29 @@
-# Cricbox imports
+from unfold.admin import ModelAdmin, TabularInline
+
 from batsman.models import Batsman
 from bowler.models import Bowler
 
 from .models import MatchStatistics, Result
 
-# Django imports
 from django.contrib import admin
 
 
 # Register your models here
-class ResultAdmin(admin.ModelAdmin):
+class ResultAdmin(ModelAdmin):
     pass
 
 
-class BatsmanAdmin(admin.TabularInline):
+class BatsmanAdmin(TabularInline):
     model = Batsman
     autocomplete_fields = ["player"]
 
 
-class BowlerAdmin(admin.TabularInline):
+class BowlerAdmin(TabularInline):
     model = Bowler
     autocomplete_fields = ["player"]
 
 
-class MatchStatisticsAdmin(admin.ModelAdmin):
+class MatchStatisticsAdmin(ModelAdmin):
     list_display = ("opposition", "date", "venue", "mtype", "result")
     list_filter = ["match__date", "match__mtype", "match__home_or_away", "result"]
     date_hierarchy = "match__date"

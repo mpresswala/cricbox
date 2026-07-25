@@ -1,18 +1,26 @@
 {% extends "home/base.html" %}
 {% block content %}
-    <h3>Averages</h3>
-    <ul>
-        <li><a href="{% url 'batsmen-stats' %}">Batting Averages</a></li>
-        <li><a href="{% url 'bowling-stats-all' %}">Bowling Averages</a></li>
-        <li><a href="{% url 'match-appearances-player' %}">Appearances</a></li>
-    </ul>
-    <h3>Other Statistics</h3>
-    <ul>
-        <li><a href="{% url 'season-overview' %}">Season Overviews</a></li>
-        <li><a href="{% url 'opposition-overview' %}">Opposing Teams</a></li>
-        <li><a href="{% url 'venues-overview' %}">Venues</a></li>
-    </ul>
-    <br>
-    <p><i><b>Note:</b> All statistics are sourced only from the old web site and scorebooks, and so are not
-        complete.</i></p>
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">Statistics</h1>
+    </div>
+</section>
+
+<div class="container-page py-8">
+    <div class="content-prose max-w-3xl">
+        <h3>Averages</h3>
+        <ul>
+            <li><a href="{% url 'batsmen-stats' %}">Batting Averages</a></li>
+            <li><a href="{% url 'bowling-stats-all' %}">Bowling Averages</a></li>
+            <li><a href="{% url 'match-appearances-player' %}">Appearances</a></li>
+        </ul>
+        <h3>Other Statistics</h3>
+        <ul>
+            <li><a href="{% url 'season-overview' %}">Season Overviews</a></li>
+            <li><a href="{% url 'opposition-overview' %}">Opposing Teams</a></li>
+            <li><a href="{% url 'venues-overview' %}">Venues</a></li>
+        </ul>
+        <p class="text-sm text-ink-500"><em><strong>Note:</strong> All statistics are sourced only from the old web site and scorebooks, and so are not complete.</em></p>
+    </div>
+</div>
 {% endblock content %}

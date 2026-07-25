@@ -1,10 +1,8 @@
-# Cricbox imports
 from cricbox.tables import FloatColumn, SummingColumn
 from cricbox.utils import TABLE_ATTRS
 
 from .models import Batsman
 
-# Django third party apps
 import django_tables2 as tables
 
 
@@ -20,7 +18,7 @@ class BatsmenTable(tables.Table):
     )
     runs_scored = tables.Column(order_by=("runs_scored", "player_full_name"), verbose_name="Runs")
     not_out = tables.Column(order_by=("not_out", "player_full_name"), verbose_name="NO")
-    highest = tables.Column(order_by=("best", "player_full_name"), verbose_name="HS")
+    highest = tables.Column(order_by=("highest", "player_full_name"), verbose_name="HS")
     average = FloatColumn(order_by=("average", "player_full_name"), verbose_name="Avg")
     fifties = tables.Column(verbose_name="50")
     hundreds = tables.Column(verbose_name="100")

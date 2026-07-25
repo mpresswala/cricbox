@@ -10,13 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-# Standard imports
 import os
 from pathlib import Path
-
-# Third-party imports
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -66,6 +61,9 @@ INSTALLED_APPS = [
     "venue.apps.VenueConfig",
     "match.apps.MatchConfig",
     "opposition.apps.OppositionConfig",
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -74,7 +72,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_tables2",
     "django_filters",
-    "django_forms_bootstrap",
     "bootstrap4",
     "django.contrib.sitemaps",
     "django.contrib.sites",
@@ -170,7 +167,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+DJANGO_TABLES2_TEMPLATE = "django_tables2/tailwind.html"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
@@ -178,18 +175,11 @@ SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
 
-
-sentry_sdk.init(
-    dsn=os.environ["DJANGO_SENTRY_URL"],
-    integrations=[DjangoIntegration()],
-    traces_sample_rate=0.5,
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True,
-)
-
 MEDIA_ROOT = f"{os.environ['DJANGO_CRICBOX_PATH']}cricbox/media/"
 MEDIA_URL = "/media/"
 
 # setting the default primary key back to an integer after upgrading to django 3.2 (https://dev.to/rubyflewtoo/upgrading-to-django-3-2-and-fixing-defaultautofield-warnings-518n)
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# django-unfold admin theme
+from cricbox.unfold_config import UNFOLD  # noqa: E402,F401

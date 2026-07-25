@@ -1,0 +1,93 @@
+{% load django_tables2 %}
+{% load i18n l10n %}
+{% block table-wrapper %}
+<div class="table-container overflow-x-auto rounded-xl border border-ink-100 bg-white shadow-sm">
+    {% block table %}
+        <table {% render_attrs table.attrs class="stats-table" %}>
+            {% block table.thead %}
+            {% if table.show_header %}
+                <thead {{ table.attrs.thead.as_html }}>
+                <tr>
+                {% for column in table.columns %}
+                    <th {{ column.attrs.th.as_html }}>
+                        {% if column.orderable %}
+                            <a class="inline-flex items-center gap-1 !text-white hover:!text-brand-200 hover:!no-underline" href="{% querystring_replace table.prefixed_order_by_field=column.order_by_alias.next %}">{{ column.header }}</a>
+                        {% else %}
+                            {{ column.header }}
+                        {% endif %}
+                    </th>
+                {% endfor %}
+                </tr>
+                </thead>
+            {% endif %}
+            {% endblock table.thead %}
+            {% block table.tbody %}
+                {# hx-boost=false: cell links navigate normally; sort/pagination still boost #}
+                <tbody hx-boost="false" {{ table.attrs.tbody.as_html }}>
+                {% for row in table.paginated_rows %}
+                    {% block table.tbody.row %}
+                    <tr {{ row.attrs.as_html }}>
+                        {% for column, cell in row.items %}
+                            <td {{ column.attrs.td.as_html }}>{% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endblock table.tbody.row %}
+                {% empty %}
+                    {% if table.empty_text %}
+                    {% block table.tbody.empty_text %}
+                        <tr><td colspan="{{ table.columns|length }}" class="px-3 py-8 text-center text-ink-500">{{ table.empty_text }}</td></tr>
+                    {% endblock table.tbody.empty_text %}
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            {% endblock table.tbody %}
+            {% block table.tfoot %}
+            {% if table.has_footer %}
+            <tfoot {{ table.attrs.tfoot.as_html }}>
+                <tr class="bg-ink-100 font-semibold">
+                {% for column in table.columns %}
+                    <td class="px-3 py-2.5" {{ column.attrs.tf.as_html }}>{{ column.footer }}</td>
+                {% endfor %}
+                </tr>
+            </tfoot>
+            {% endif %}
+            {% endblock table.tfoot %}
+        </table>
+    {% endblock table %}
+</div>
+
+{% block pagination %}
+    {% if table.page and table.paginator.num_pages > 1 %}
+    <nav aria-label="Table navigation" class="mt-4 flex items-center justify-center gap-1">
+        {% if table.page.has_previous %}
+            {% block pagination.previous %}
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.previous_page_number %}"
+               class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50">
+                &laquo; {% trans 'previous' %}
+            </a>
+            {% endblock pagination.previous %}
+        {% endif %}
+        {% if table.page.has_previous or table.page.has_next %}
+        {% block pagination.range %}
+        {% for p in table.page|table_page_range:table.paginator %}
+            {% if table.page.number == p %}
+                <span class="rounded-md border border-brand-600 bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white">{{ p }}</span>
+            {% else %}
+                <a {% if p != '...' %}href="{% querystring_replace table.prefixed_page_field=p %}"{% endif %}
+                   class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+        {% endblock pagination.range %}
+        {% endif %}
+        {% if table.page.has_next %}
+            {% block pagination.next %}
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.next_page_number %}"
+               class="rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50">
+                {% trans 'next' %} &raquo;
+            </a>
+            {% endblock pagination.next %}
+        {% endif %}
+    </nav>
+    {% endif %}
+{% endblock pagination %}
+{% endblock table-wrapper %}

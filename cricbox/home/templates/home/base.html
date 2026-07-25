@@ -1,113 +1,141 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en" class="h-full">
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="London Fields CC Website">
-    <meta name="author" content="Mufaddal Presswala">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="London Fields Cricket Club — fixtures, results, players and statistics.">
+    <meta name="author" content="London Fields CC">
 
-    <!-- Favicons -->
-    <link href="{% static "img/../../static/assets/img/lfcc_logo.png" %}" rel="icon">
+    <link href="{% static 'assets/img/lfcc_logo.png' %}" rel="icon">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-          rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Vendor CSS Files -->
-    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/icofont/icofont.min.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/venobox/venobox.css'%}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/owl.carousel/assets/owl.carousel.min.css'%}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
-
-    <!-- Template Main CSS File -->
-    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
 
     {% if title %}
-        <title>London Fields CC - {{ title }}</title>
+        <title>London Fields CC — {{ title }}</title>
     {% else %}
         <title>London Fields CC</title>
     {% endif %}
+
+    <script defer src="{% static 'vendor/htmx.min.js' %}"></script>
+    <script defer src="{% static 'vendor/alpine.min.js' %}"></script>
+    {% block extra_head %}{% endblock %}
 </head>
-<body>
-<header id="header" class="fixed-top">
-    <div class="container d-flex">
-        <div class="logo mr-auto">
-            <h1 class="text-light"><a href="{% url 'site-home' %}"><span>London Fields CC</span></a></h1>
-            <!-- Uncomment below if you prefer to use an image logo -->
-            <a href="{% url 'site-home' %}"><img src="{% static "img/../../static/assets/img/lfcc_logo.png" %}" alt=""
-                                                 class="img-fluid"></a>
-        </div>
-        <nav class="nav-menu d-none d-lg-block">
-            <ul>
-                <li class="active"><a href="{% url 'site-home' %}">Home</a></li>
-                <li><a href="{% url 'fixtures-overview' %}">Fixtures</a></li>
-                <li class="drop-down"><a href="#">Honours</a>
-                    <ul>
-                        <li><a href="{% url 'site-positions' %}">Club Positions</a></li>
-                        <li><a href="{% url 'site-performers' %}">Club Performers</a></li>
-                    </ul>
-                </li>
-                <li class="drop-down"><a href="#">Stats</a>
-                    <ul>
-                        <li><a href="{% url 'batsmen-stats' %}">Batting</a></li>
-                        <li><a href="{% url 'bowling-stats-all' %}">Bowling</a></li>
-                        <li><a href="{% url 'match-appearances-player' %}">Appearances</a></li>
-                        <li class="drop-down"><a href="#">Overview</a>
-                            <ul>
-                                <li><a href="{% url 'season-overview' %}">Season</a></li>
-                                <li><a href="{% url 'opposition-overview' %}">Opposition</a></li>
-                                <li><a href="{% url 'venues-overview' %}">Venue</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
+<body class="flex min-h-full flex-col">
 
-                <li><a href="{% url 'players' %}">Players</a></li>
-                <li><a href="{% url 'site-history' %}">History</a></li>
-                <li><a href="{% url 'site-about' %}">About</a></li>
-                <li><a href="{% url 'site-links' %}">Links</a></li>
-            </ul>
-        </nav><!-- .nav-menu -->
-        <div class="header-social-links">
-            <a href="https://www.instagram.com/londonfieldscc/" class="instagram"><i class="icofont-instagram"></i></a>
-        </div>
+<header class="sticky top-0 z-40 border-b border-ink-800 bg-ink-900 text-white shadow-sm"
+        x-data="{ mobileOpen: false }">
+    <div class="container-page flex h-16 items-center justify-between gap-4">
+        <!-- Brand -->
+        <a href="{% url 'site-home' %}" class="flex items-center gap-3">
+            <img src="{% static 'assets/img/lfcc_logo.png' %}" alt="London Fields CC" class="h-9 w-auto brightness-0 invert">
+            <span class="text-lg font-bold tracking-tight sm:text-xl">London Fields CC</span>
+        </a>
+
+        <!-- Desktop nav -->
+        <nav class="hidden items-center gap-1 lg:flex">
+            <a href="{% url 'site-home' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">Home</a>
+            <a href="{% url 'fixtures-overview' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">Fixtures</a>
+
+            <!-- Honours dropdown -->
+            <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                <button class="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">
+                    Honours
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div x-show="open" x-transition x-cloak class="absolute left-0 mt-1 w-52 rounded-lg border border-ink-100 bg-white py-1 text-ink-800 shadow-lg">
+                    <a href="{% url 'site-positions' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Club Positions</a>
+                    <a href="{% url 'site-performers' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Club Performers</a>
+                </div>
+            </div>
+
+            <!-- Stats dropdown -->
+            <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                <button class="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">
+                    Stats
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div x-show="open" x-transition x-cloak class="absolute left-0 mt-1 w-52 rounded-lg border border-ink-100 bg-white py-1 text-ink-800 shadow-lg">
+                    <a href="{% url 'batsmen-stats' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Batting</a>
+                    <a href="{% url 'bowling-stats-all' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Bowling</a>
+                    <a href="{% url 'match-appearances-player' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Appearances</a>
+                    <a href="{% url 'site-records' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Records</a>
+                    <a href="{% url 'site-dismissals' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Dismissals</a>
+                    <div class="my-1 border-t border-ink-100"></div>
+                    <p class="px-4 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-ink-400">Overview</p>
+                    <a href="{% url 'season-overview' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Season</a>
+                    <a href="{% url 'opposition-overview' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Opposition</a>
+                    <a href="{% url 'venues-overview' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Venue</a>
+                    <a href="{% url 'site-results' %}" class="block px-4 py-2 text-sm hover:bg-brand-50 hover:text-brand-700">Results Record</a>
+                </div>
+            </div>
+
+            <a href="{% url 'players' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">Players</a>
+            <a href="{% url 'site-history' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">History</a>
+            <a href="{% url 'site-about' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">About</a>
+            <a href="{% url 'site-links' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800 hover:text-white">Links</a>
+
+            <a href="https://www.instagram.com/londonfieldscc/" target="_blank" rel="noopener" aria-label="Instagram"
+               class="ml-2 rounded-md p-2 text-ink-200 hover:bg-ink-800 hover:text-white">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.06 1.8.25 2.2.42.6.2 1 .48 1.4.9.42.4.7.8.9 1.4.17.4.36 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.06 1.2-.25 1.8-.42 2.2-.2.6-.48 1-.9 1.4-.4.42-.8.7-1.4.9-.4.17-1 .36-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.06-1.8-.25-2.2-.42-.6-.2-1-.48-1.4-.9-.42-.4-.7-.8-.9-1.4-.17-.4-.36-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.06-1.2.25-1.8.42-2.2.2-.6.48-1 .9-1.4.4-.42.8-.7 1.4-.9.4-.17 1-.36 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.1 0-3.5 0-4.7.07-.9.04-1.4.2-1.7.32-.43.17-.74.37-1.06.7-.32.31-.52.62-.7 1.05-.12.3-.28.8-.32 1.7C3.25 8.5 3.24 8.9 3.24 12s0 3.5.07 4.7c.04.9.2 1.4.32 1.7.17.43.37.74.7 1.06.31.32.62.52 1.05.7.3.12.8.28 1.7.32 1.2.06 1.6.07 4.7.07s3.5 0 4.7-.07c.9-.04 1.4-.2 1.7-.32.43-.17.74-.37 1.06-.7.32-.31.52-.62.7-1.05.12-.3.28-.8.32-1.7.06-1.2.07-1.6.07-4.7s0-3.5-.07-4.7c-.04-.9-.2-1.4-.32-1.7a2.8 2.8 0 0 0-.7-1.06 2.8 2.8 0 0 0-1.05-.7c-.3-.12-.8-.28-1.7-.32C15.5 4 15.1 4 12 4Zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88Zm0 8.14A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4Zm6.3-8.34a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0Z"/></svg>
+            </a>
+        </nav>
+
+        <!-- Mobile toggle -->
+        <button @click="mobileOpen = !mobileOpen" class="rounded-md p-2 text-ink-200 hover:bg-ink-800 hover:text-white lg:hidden" aria-label="Toggle menu">
+            <svg x-show="!mobileOpen" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <svg x-show="mobileOpen" x-cloak class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
     </div>
-</header><!-- End Header -->
-<a href="#" class="back-to-top"><i class="bx bxs-up-arrow-alt"></i></a>
-{% block content %}{% endblock content %}
-<script src="{% static 'assets/vendor/jquery/jquery.min.js' %}"></script>
-<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'assets/vendor/jquery.easing/jquery.easing.min.js' %}"></script>
-<script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
-<script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-<script src="{% static 'assets/vendor/venobox/venobox.min.js' %}"></script>
-<script src="{% static 'assets/vendor/owl.carousel/owl.carousel.min.js' %}"></script>
-<script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
 
-<!-- ======= Footer ======= -->
-<footer id="footer">
-    <div class="container">
-      <div class="copyright">
-        &copy; Copyright <strong><span>Scaffold</span></strong>. All Rights Reserved
-      </div>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/scaffold-bootstrap-metro-style-template/ -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-      </div>
-      <div class="credits">
-        Development by Mufaddal Presswala standing on the shoulders of club legend <strong><span>Rob Harries</span></strong>...
-      </div>
+    <!-- Mobile menu -->
+    <div x-show="mobileOpen" x-transition x-cloak class="border-t border-ink-800 bg-ink-900 lg:hidden">
+        <nav class="container-page flex flex-col gap-1 py-3">
+            <a href="{% url 'site-home' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">Home</a>
+            <a href="{% url 'fixtures-overview' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">Fixtures</a>
+            <p class="px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-ink-500">Honours</p>
+            <a href="{% url 'site-positions' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Club Positions</a>
+            <a href="{% url 'site-performers' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Club Performers</a>
+            <p class="px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-ink-500">Stats</p>
+            <a href="{% url 'batsmen-stats' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Batting</a>
+            <a href="{% url 'bowling-stats-all' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Bowling</a>
+            <a href="{% url 'match-appearances-player' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Appearances</a>
+            <a href="{% url 'site-records' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Records</a>
+            <a href="{% url 'site-dismissals' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Dismissals</a>
+            <a href="{% url 'season-overview' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Season Overview</a>
+            <a href="{% url 'opposition-overview' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Opposition Overview</a>
+            <a href="{% url 'venues-overview' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Venue Overview</a>
+            <a href="{% url 'site-results' %}" class="rounded-md px-3 py-2 text-sm text-ink-200 hover:bg-ink-800">Results Record</a>
+            <div class="my-2 border-t border-ink-800"></div>
+            <a href="{% url 'players' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">Players</a>
+            <a href="{% url 'site-history' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">History</a>
+            <a href="{% url 'site-about' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">About</a>
+            <a href="{% url 'site-links' %}" class="rounded-md px-3 py-2 text-sm font-medium text-ink-200 hover:bg-ink-800">Links</a>
+        </nav>
     </div>
-  </footer><!-- End Footer -->
+</header>
 
-<!-- Template Main JS File -->
-<script src="{% static 'assets/js/main.js' %}"></script>
+<main class="flex-1">
+    {% block content %}{% endblock content %}
+</main>
+
+<footer class="mt-16 border-t border-ink-800 bg-ink-900 text-ink-300">
+    <div class="container-page flex flex-col items-center justify-between gap-4 py-8 text-sm sm:flex-row">
+        <div class="flex items-center gap-3">
+            <img src="{% static 'assets/img/lfcc_logo.png' %}" alt="" class="h-8 w-auto brightness-0 invert">
+            <span>&copy; {% now "Y" %} London Fields Cricket Club</span>
+        </div>
+        <p class="text-center text-ink-400 sm:text-right">
+            Built by Mufaddal Presswala, standing on the shoulders of club legend Rob Harries.
+        </p>
+    </div>
+</footer>
+
+<style>[x-cloak]{display:none !important;}</style>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,21 +1,14 @@
 {% extends "home/base.html" %}
+{% load render_table from django_tables2 %}
 {% block content %}
-    {% load render_table from django_tables2 %}
-    <section id="portfolio" class="portfolio">
-        <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                <h2>{{ type }} Overview</h2>
-                {% if filter %}
-                    {% load bootstrap4 %}
-                    <form action="" method="get" class="form-group col-md-4">
-                        {% bootstrap_form filter.form layout='horizontal' horizontal_field_class="col-md-4" %}
-                        <div style="text-align: left;">
-                        {% bootstrap_button "Filter" button_type="submit" %}
-                        </div>
-                    </form>
-                {% endif %}
-                {% render_table table %}
-            </div>
-        </div>
-    </section>
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">{{ type }} Overview</h1>
+    </div>
+</section>
+
+<div class="container-page py-8">
+    {% include "home/_filters.html" %}
+    {% include "home/_results_table.html" %}
+</div>
 {% endblock content %}

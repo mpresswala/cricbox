@@ -1,0 +1,24 @@
+/*
+ * Keep django-unfold tabular inlines in a compact table layout at every
+ * width. By default Unfold collapses tabular inlines to a stacked, one-field-
+ * per-row layout below the Tailwind `lg` breakpoint (1024px viewport), which
+ * makes the batsmen/bowlers scorecard grids unusable in a narrower admin
+ * window. Forcing the real table layout (with horizontal scroll from the
+ * existing overflow-x-auto wrapper) matches the classic admin behaviour.
+ */
+
+/* Always show the column header row. */
+.formset thead {
+    display: table-header-group !important;
+}
+
+/* Keep each field as a real table cell instead of a stacked flex block. */
+.formset td.field-tabular {
+    display: table-cell !important;
+    vertical-align: middle;
+}
+
+/* Hide the per-cell "data-label" prefix that only makes sense when stacked. */
+.formset td.field-tabular::before {
+    display: none !important;
+}

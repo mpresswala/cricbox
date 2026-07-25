@@ -1,0 +1,12 @@
+# Litestream continuous replication config.
+# Credentials come from the environment (LITESTREAM_ACCESS_KEY_ID /
+# LITESTREAM_SECRET_ACCESS_KEY), which Litestream reads automatically.
+# The bucket/endpoint/region are set via env vars in render.yaml.
+dbs:
+  - path: /var/data/db.sqlite3
+    replicas:
+      - type: s3
+        bucket: ${LITESTREAM_BUCKET}
+        path: cricbox
+        endpoint: ${LITESTREAM_ENDPOINT}
+        region: ${LITESTREAM_REGION}

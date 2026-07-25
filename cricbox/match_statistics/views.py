@@ -7,11 +7,9 @@ from .tables import (
     VenuesTable,
 )
 
-# Django imports
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, FloatField, Q
 from django.views.generic.base import TemplateView
 
-# Django third party apps
 import django_filters
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin
@@ -20,7 +18,6 @@ from django_tables2.views import SingleTableMixin
 
 # Create your views here.
 class OppositionFilter(django_filters.FilterSet):
-
     season = django_filters.RangeFilter(field_name="match__season")
 
     class Meta:
@@ -39,7 +36,6 @@ class OppositionFilter(django_filters.FilterSet):
 
 
 class VenueFilter(django_filters.FilterSet):
-
     season = django_filters.RangeFilter(field_name="match__season")
 
     class Meta:
@@ -95,7 +91,7 @@ class SeasonView(SingleTableMixin, FilterView):
                 loss=loss,
                 abandoned=abandoned,
                 draw=draw,
-                win_percent=ExpressionWrapper(F("won") / F("played"), output_field=FloatField()),
+                win_percent=ExpressionWrapper(F("won") * 100.0 / F("played"), output_field=FloatField()),
             )
             .order_by("-match__season")
         )
@@ -126,7 +122,7 @@ class OppositionView(SingleTableMixin, FilterView):
                 loss=loss,
                 abandoned=abandoned,
                 draw=draw,
-                win_percent=ExpressionWrapper(F("won") / F("played"), output_field=DecimalField()),
+                win_percent=ExpressionWrapper(F("won") * 100.0 / F("played"), output_field=DecimalField()),
             )
             .order_by("-won")
         )
@@ -157,7 +153,7 @@ class VenuesView(SingleTableMixin, FilterView):
                 loss=loss,
                 abandoned=abandoned,
                 draw=draw,
-                win_percent=ExpressionWrapper(F("won") / F("played"), output_field=DecimalField()),
+                win_percent=ExpressionWrapper(F("won") * 100.0 / F("played"), output_field=DecimalField()),
             )
             .order_by("-won")
         )

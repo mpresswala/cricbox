@@ -1,83 +1,28 @@
 {% extends "home/base.html" %}
+{% load render_table from django_tables2 %}
 {% block content %}
-    <section id="portfolio" class="portfolio">
-        <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                {% load render_table from django_tables2 %}
-                <h2>Club Positions</h2>
-                <hr/>
-                <div>
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active show" data-toggle="tab" href="#captains" id="captains-tab"
-                               role="tab" aria-controls="captains" aria-selected="true">Captains</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#vice-captains" id="vice-captains-tab"
-                               role="tab" aria-controls="vice-captains" aria-selected="false">Vice-Captains</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#midweek-captains" id="midweek-captains-tab"
-                               role="tab" aria-controls="midweek-captains" aria-selected="false">Midweek Captains</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#fixture-secretaries"
-                               id="fixture-secretaries-tab" role="tab" aria-controls="fixture-secretaries"
-                               aria-selected="false">Fixture Secretaries</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#domestic"
-                               id="domestic-tab" role="tab" aria-controls="domestic-secretaries"
-                               aria-selected="false">Domestic Tour Czars</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#international"
-                               id="international-tab" role="tab" aria-controls="international-secretaries"
-                               aria-selected="false">International Tour Czars</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#veterans" id="veterans-tab" role="tab"
-                               aria-controls="veterans" aria-selected="false">Life Members</a>
-                        </li>
-                    </ul>
-                    <div id="myTabContent" class="tab-content">
-                        <div class="tab-pane fade active show" id="captains" role="tabpanel"
-                             aria-labelledby="captains-tab">
-                            {% render_table tables.0 %}
-                        </div>
-                        <div class="tab-pane fade" id="vice-captains" role="tabpanel"
-                             aria-labelledby="vice-captains-tab">
-                            {% render_table tables.1 %}
-                        </div>
-                        <div class="tab-pane fade" id="midweek-captains" role="tabpanel"
-                             aria-labelledby="midweek-captains-tab">
-                            {% render_table tables.2 %}
-                        </div>
-                        <div class="tab-pane fade" id="fixture-secretaries" role="tabpanel"
-                             aria-labelledby="fixture-secretaries-tab">
-                            {% render_table tables.3 %}
-                        </div>
-                        <div class="tab-pane fade" id="domestic" role="tabpanel"
-                             aria-labelledby="domestic-tab">
-                            {% render_table tables.4 %}
-                        </div>
-                        <div class="tab-pane fade" id="international" role="tabpanel"
-                             aria-labelledby="international-tab">
-                            {% render_table tables.5 %}
-                        </div>
-                        <div class="tab-pane fade" id="veterans" role="tabpanel"
-                             aria-labelledby="veterans-tab">
-                            {% render_table tables.6 %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <script>
-  $(function () {
-    $('#myTab li:last-child a').tab('show')
-  })
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">Club Positions</h1>
+    </div>
+</section>
 
-    </script>
+<div class="container-page py-8" x-data="{ tab: 0 }">
+    <div class="mb-6 flex flex-wrap border-b border-ink-200">
+        <button @click="tab=0" :class="tab===0 ? 'tab-btn tab-btn-active' : 'tab-btn'">Captains</button>
+        <button @click="tab=1" :class="tab===1 ? 'tab-btn tab-btn-active' : 'tab-btn'">Vice-Captains</button>
+        <button @click="tab=2" :class="tab===2 ? 'tab-btn tab-btn-active' : 'tab-btn'">Midweek Captains</button>
+        <button @click="tab=3" :class="tab===3 ? 'tab-btn tab-btn-active' : 'tab-btn'">Fixture Secretaries</button>
+        <button @click="tab=4" :class="tab===4 ? 'tab-btn tab-btn-active' : 'tab-btn'">Domestic Tour Czars</button>
+        <button @click="tab=5" :class="tab===5 ? 'tab-btn tab-btn-active' : 'tab-btn'">International Tour Czars</button>
+        <button @click="tab=6" :class="tab===6 ? 'tab-btn tab-btn-active' : 'tab-btn'">Life Members</button>
+    </div>
+    <div x-show="tab===0">{% render_table tables.0 %}</div>
+    <div x-show="tab===1" x-cloak>{% render_table tables.1 %}</div>
+    <div x-show="tab===2" x-cloak>{% render_table tables.2 %}</div>
+    <div x-show="tab===3" x-cloak>{% render_table tables.3 %}</div>
+    <div x-show="tab===4" x-cloak>{% render_table tables.4 %}</div>
+    <div x-show="tab===5" x-cloak>{% render_table tables.5 %}</div>
+    <div x-show="tab===6" x-cloak>{% render_table tables.6 %}</div>
+</div>
 {% endblock content %}

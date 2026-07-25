@@ -1,4 +1,3 @@
-# Django third party apps
 import django_filters
 
 

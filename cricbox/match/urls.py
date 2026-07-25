@@ -1,6 +1,5 @@
 from .views import AppearancesView, FixtureView
 
-# Django imports
 from django.urls import path
 
 urlpatterns = [

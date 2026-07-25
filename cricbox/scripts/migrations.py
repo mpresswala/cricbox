@@ -1,7 +1,5 @@
-# Third-party imports
 import mysql.connector
 
-# Cricbox imports
 from opposition.models import Opposition
 from player.models import Player
 from venue.models import Venue

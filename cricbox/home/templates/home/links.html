@@ -1,40 +1,42 @@
 {% extends "home/base.html" %}
 {% block content %}
-    <section id="about" class="about">
-        <div class="container">
-            <h4>Links</h4>
-            <br>
-            <h5>Important Documents</h5>
-            <ul>
-                <li><a href="{% url 'site-handbook' %}">LFCC Handbook</a></li>
-                <li><a href="{% url 'site-match_manager' %}">Match Manager Duties</a></li>
-                <li><a href="{% url 'site-documents' %}">All Other Documents</a></li>
-            </ul>
-            <br>
-            <h5>Opposition</h5>
-            <ul>
-                <li><a href="http://www.ashteadcc.co.uk/">Ashtead CC</a></li>
-                <li><a href="https://www.facebook.com/TheCamelCricketClub/">The Camel CC</a></li>
-                <li><a href="http://hucc.tumblr.com/">Hackney Umpires CC</a></li>
-                <li><a href="https://www.facebook.com/hobgoblinnomads/">Hobgoblin Nomads CC</a></li>
-                <li><a href="https://www.facebook.com/Homerton-Cricket-Club-217463448284966/">Homerton/Chat's Palace
-                    CC</a></li>
-                <li><a href="http://ltbaddowcc.hitscricket.com/default.aspx">Little Baddow CC</a></li>
-                <li><a href="http://www.oldfallopians.co.uk/">Old Fallopians</a></li>
-                <li><a href="http://www.pacificcc.co.uk/">Pacific CC</a></li>
-                <li><a href="https://www.royalsovereignclapton.co.uk/">The Royal Sovereign</a></li>
-                <li><a href="https://www.facebook.com/The-Shakespeare-Cricket-Club-232914500061416/">The Shakespeare
-                    CC</a></li>
-                <li><a href="http://www.stokenewingtoncricketclub.com/">Stoke Newington CC</a></li>
-                <li><a href="http://www.strongroomcc.com/">Strongroom CC</a></li>
-                <li><a href="https://www.facebook.com/TowerHamletsCricket/">Tower Hamlets CC</a></li>
-                <li><a href="http://www.thevillagecc.org.uk/">The Village CC</a></li>
-            </ul>
-            <br>
-            <h5>Services</h5>
-            <ul>
-                <li><a href="http://www.boxbats.com">Boxbats - bespoke cricket bats and repairs in London</a></li>
-            </ul>
-        </div>
-    </section><!-- End About Section -->
+<section class="page-header">
+    <div class="container-page py-10">
+        <h1 class="text-3xl font-bold sm:text-4xl">Links</h1>
+    </div>
+</section>
+
+<div class="container-page py-8">
+    <div class="content-prose max-w-3xl">
+        <h5>Important Documents</h5>
+        <ul>
+            <li><a href="{% url 'site-handbook' %}">LFCC Handbook</a></li>
+            <li><a href="{% url 'site-match_manager' %}">Match Manager Duties</a></li>
+            <li><a href="{% url 'site-documents' %}">All Other Documents</a></li>
+        </ul>
+
+        <h5>Opposition</h5>
+        <ul>
+            <li><a href="http://www.ashteadcc.co.uk/">Ashtead CC</a></li>
+            <li><a href="https://www.facebook.com/TheCamelCricketClub/">The Camel CC</a></li>
+            <li><a href="http://hucc.tumblr.com/">Hackney Umpires CC</a></li>
+            <li><a href="https://www.facebook.com/hobgoblinnomads/">Hobgoblin Nomads CC</a></li>
+            <li><a href="https://www.facebook.com/Homerton-Cricket-Club-217463448284966/">Homerton/Chat's Palace CC</a></li>
+            <li><a href="http://ltbaddowcc.hitscricket.com/default.aspx">Little Baddow CC</a></li>
+            <li><a href="http://www.oldfallopians.co.uk/">Old Fallopians</a></li>
+            <li><a href="http://www.pacificcc.co.uk/">Pacific CC</a></li>
+            <li><a href="https://www.royalsovereignclapton.co.uk/">The Royal Sovereign</a></li>
+            <li><a href="https://www.facebook.com/The-Shakespeare-Cricket-Club-232914500061416/">The Shakespeare CC</a></li>
+            <li><a href="http://www.stokenewingtoncricketclub.com/">Stoke Newington CC</a></li>
+            <li><a href="http://www.strongroomcc.com/">Strongroom CC</a></li>
+            <li><a href="https://www.facebook.com/TowerHamletsCricket/">Tower Hamlets CC</a></li>
+            <li><a href="http://www.thevillagecc.org.uk/">The Village CC</a></li>
+        </ul>
+
+        <h5>Services</h5>
+        <ul>
+            <li><a href="http://www.boxbats.com">Boxbats — bespoke cricket bats and repairs in London</a></li>
+        </ul>
+    </div>
+</div>
 {% endblock content %}

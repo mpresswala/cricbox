@@ -1,6 +1,5 @@
 from .views import MatchView, OppositionView, SeasonView, VenuesView
 
-# Django imports
 from django.urls import path
 
 urlpatterns = [
