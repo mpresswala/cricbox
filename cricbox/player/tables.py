@@ -14,10 +14,12 @@ class PlayersTable(tables.Table):
     playing_role = tables.Column(verbose_name="Role")
     batting_style = tables.Column(verbose_name="Bat")
     bowling_style = tables.Column(verbose_name="Bowl")
-    first_name = tables.Column(verbose_name="Name", linkify=("player-profile", [tables.A("id")]))
-
-    def render_first_name(self, value, record):
-        return f"{value} {record.last_name}"
+    first_name = tables.Column(
+        accessor="full_name",
+        verbose_name="Name",
+        linkify=("player-profile", [tables.A("id")]),
+        order_by=("first_name", "last_name"),
+    )
 
     class Meta:
         attrs = TABLE_ATTRS
