@@ -2,7 +2,7 @@
 """Convert a MySQL *data-only* dump into SQLite-loadable INSERT statements.
 
 Usage:
-    python scripts/mysql_dump_to_sqlite.py <mysql_dump.sql> <out.sql>
+    python scripts/mysql_dump_to_sqlite.py [--with-users] <mysql_dump.sql> <out.sql>
 
 Produce the input with:
     mysqldump --no-create-info --skip-extended-insert --complete-insert \\
@@ -14,9 +14,15 @@ populates them), with MySQL backslash string escapes rewritten to SQLite's
 '' form. Load it into a migrated SQLite database with:
     sqlite3 db.sqlite3 < out.sql
 (or see scripts/build_sqlite_from_mysql.sh which does the whole thing).
+
+--with-users also carries over the `auth_user` accounts (usernames + password
+hashes, so people can log in with their existing credentials). Group and
+per-user permission assignments are NOT carried over, because they reference
+auto-generated permission/content-type ids that differ in the fresh schema;
+re-assign any groups in the admin afterwards (superusers are unaffected).
 """
 
-import sys
+import argparse
 
 # Cricket application tables to load; everything else (auth_*, django_*) is
 # recreated/populated by `migrate` and must not be duplicated here.
@@ -99,7 +105,11 @@ def table_of(line):
     return line[start + 1 : end]
 
 
-def main(src, out):
+def main(src, out, with_users=False):
+    keep = set(KEEP)
+    if with_users:
+        keep.add("auth_user")
+
     kept = 0
     skipped = set()
     with (
@@ -112,7 +122,7 @@ def main(src, out):
             if not line.startswith("INSERT INTO `"):
                 continue
             table = table_of(line)
-            if table not in KEEP:
+            if table not in keep:
                 skipped.add(table)
                 continue
             fout.write(convert_line(line))
@@ -125,6 +135,13 @@ def main(src, out):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.exit(__doc__)
-    main(sys.argv[1], sys.argv[2])
+    parser = argparse.ArgumentParser(description="Convert a MySQL data-only dump to SQLite INSERTs.")
+    parser.add_argument("src", help="MySQL dump file")
+    parser.add_argument("out", help="output SQLite .sql file")
+    parser.add_argument(
+        "--with-users",
+        action="store_true",
+        help="also carry over the auth_user accounts (usernames + password hashes)",
+    )
+    args = parser.parse_args()
+    main(args.src, args.out, with_users=args.with_users)

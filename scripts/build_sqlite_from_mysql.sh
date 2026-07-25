@@ -3,14 +3,21 @@
 # Build a ready-to-use SQLite database from a MySQL data-only dump.
 #
 # Usage:
-#   scripts/build_sqlite_from_mysql.sh <mysql_dump.sql> [output_db]
+#   scripts/build_sqlite_from_mysql.sh [--with-users] <mysql_dump.sql> [output_db]
 #
 # Produces <output_db> (default: db_import.sqlite3) with the current schema
-# (via `migrate`) plus your data. Load it onto Render by seeding the Litestream
-# bucket (see the README), or use it locally.
+# (via `migrate`) plus your data. Pass --with-users to also carry over the
+# existing login accounts. Load it onto Render by seeding the Litestream bucket
+# (see the README), or use it locally.
 set -euo pipefail
 
-DUMP="${1:?usage: build_sqlite_from_mysql.sh <mysql_dump.sql> [output_db]}"
+WITH_USERS=""
+if [ "${1:-}" = "--with-users" ]; then
+  WITH_USERS="--with-users"
+  shift
+fi
+
+DUMP="${1:?usage: build_sqlite_from_mysql.sh [--with-users] <mysql_dump.sql> [output_db]}"
 OUT="${2:-db_import.sqlite3}"
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
@@ -32,7 +39,7 @@ TMP_SQL="$(mktemp)"
 trap 'rm -f "$TMP_SQL"' EXIT
 
 echo "==> Converting MySQL dump -> SQLite INSERTs"
-"$PYTHON" "$REPO/scripts/mysql_dump_to_sqlite.py" "$DUMP" "$TMP_SQL"
+"$PYTHON" "$REPO/scripts/mysql_dump_to_sqlite.py" $WITH_USERS "$DUMP" "$TMP_SQL"
 
 echo "==> Creating fresh schema in $OUT_ABS"
 rm -f "$OUT_ABS" "$OUT_ABS-wal" "$OUT_ABS-shm"

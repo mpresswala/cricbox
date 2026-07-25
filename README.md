@@ -226,7 +226,10 @@ than swapping the file underneath a live service. In rough order of preference:
    scripts/build_sqlite_from_mysql.sh london_fields_data.sql db.sqlite3
    ```
    (It converts the dump, runs `migrate` for a fresh schema, and loads the
-   data.) Then push the initial snapshot to the bucket with Litestream and
+   data.) Add `--with-users` to also carry over the existing login accounts
+   (usernames + password hashes); otherwise create an admin afterwards with
+   `createsuperuser`. Group/permission assignments are not carried over.
+   Then push the initial snapshot to the bucket with Litestream and
    deploy — the empty disk triggers an automatic restore:
    ```
    litestream replicate db.sqlite3 s3://<bucket>/cricbox   # leave ~30s, then stop
