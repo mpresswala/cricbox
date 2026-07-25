@@ -75,11 +75,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "cricbox.wsgi.application"
 
-# Database — SQLite for local dev
+# Database — SQLite for local dev. DJANGO_SQLITE_PATH lets tooling (e.g. the
+# MySQL-dump import script) target a different SQLite file.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "NAME": os.environ.get("DJANGO_SQLITE_PATH", os.path.join(BASE_DIR, "db.sqlite3")),
     }
 }
 

@@ -218,14 +218,19 @@ than swapping the file underneath a live service. In rough order of preference:
    render ssh <service> -- .venv/bin/python cricbox/manage.py loaddata /tmp/data.json
    ```
 
-2. **Seed the Litestream bucket, let Render restore it.** Build `db.sqlite3`
-   locally from a MySQL dump (see `scripts/`), then run Litestream locally once
-   to push the initial snapshot to the bucket:
+2. **Seed the Litestream bucket, let Render restore it.** Build a ready
+   `db.sqlite3` from a MySQL data-only dump with the bundled script:
+   ```
+   mysqldump --no-create-info --skip-extended-insert --complete-insert \
+     --single-transaction --no-tablespaces <db> > london_fields_data.sql
+   scripts/build_sqlite_from_mysql.sh london_fields_data.sql db.sqlite3
+   ```
+   (It converts the dump, runs `migrate` for a fresh schema, and loads the
+   data.) Then push the initial snapshot to the bucket with Litestream and
+   deploy — the empty disk triggers an automatic restore:
    ```
    litestream replicate db.sqlite3 s3://<bucket>/cricbox   # leave ~30s, then stop
    ```
-   On the next deploy the empty disk triggers an automatic restore from the
-   bucket.
 
 3. **Direct file copy (no Litestream).** Only if replication is not yet enabled:
    build `db.sqlite3` locally and copy it to the disk, then set the
