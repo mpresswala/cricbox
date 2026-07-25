@@ -36,9 +36,12 @@ FIFTIES = Q(Q(runs__gt=49), Q(runs__lte=99))
 HUNDREDS = Q(runs__gt=99)
 FIVERS = Q(Q(wickets__gt=4))
 INVALID_PLAYERS = Q(Q(first_name="Extras") | Q(first_name="Unknown") | Q(first_name=None))
-INVALID_PLAYERS_MATCH = Q(
-    Q(players__full_name="Extras") | Q(players__full_name=None) | Q(players__full_name="Unknown") | Q(players__id=None)
-)
+
+# Placeholder "players" that stand in for byes/extras or unrecorded names; they
+# must never appear in stats or appearances. Compared against a normalised
+# (trimmed, lower-cased) name so "Extras " / "EXTRAS" all match, while real
+# players like "Wayne Unknown" are unaffected.
+PSEUDO_PLAYER_NAMES = ["extras", "unknown"]
 
 TABLE_ATTRS = {"class": "stats-table"}
 
