@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
         # read, so the views are created only after all table alterations.
         ('match', '0005_auto_20250521_1209'),
         ('match_statistics', '0003_auto_20250521_1209'),
-        ('batsman', '0001_initial'),
+        ('batsman', '0002_require_runs_and_how_out'),
         ('bowler', '0003_bowler_number'),
         ('player', '0002_auto_20250521_1209'),
     ]
