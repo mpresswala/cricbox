@@ -18,6 +18,20 @@ Theoretically this structure can be reused across any clubs with a similar forma
     player
     venue
 
+### Dependencies (uv)
+
+Python dependencies are managed with [uv](https://docs.astral.sh/uv/). It runs on
+Django 6.0 and requires Python 3.12+.
+
+```
+uv sync                     # create .venv and install runtime + dev dependencies
+uv sync --extra mysql       # also install the MySQL drivers (production)
+uv run python cricbox/manage.py <command>
+```
+
+The MySQL drivers live in an optional `mysql` extra so local development (which
+uses SQLite) does not need to build `mysqlclient`.
+
 ### Environment Variables Settings
 Set the following environment variables before starting the application:
 ```
@@ -53,6 +67,6 @@ templates or styles, run `npm run build:css` and then `collectstatic` as usual.
 A SQLite-backed settings module is provided so the app can run without MySQL:
 
 ```
-DJANGO_SETTINGS_MODULE=cricbox.settings_local python cricbox/manage.py migrate
-DJANGO_SETTINGS_MODULE=cricbox.settings_local python cricbox/manage.py runserver
+DJANGO_SETTINGS_MODULE=cricbox.settings_local uv run python cricbox/manage.py migrate
+DJANGO_SETTINGS_MODULE=cricbox.settings_local uv run python cricbox/manage.py runserver
 ```

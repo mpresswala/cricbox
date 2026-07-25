@@ -1,92 +1,39 @@
-asgiref==3.3.4; python_version >= "3.6" \
-    --hash=sha256:92906c611ce6c967347bbfea733f13d6313901d54dcca88195eaeb52b2a8e8ee \
-    --hash=sha256:d1216dfbdfb63826470995d31caed36225dcaf34f182e0fa257a4dd9e86f1b78
-beautifulsoup4==4.9.3; python_version >= "3.6" and python_version < "4.0" \
-    --hash=sha256:4c98143716ef1cb40bf7f39a8e3eec8f8b009509e74904ba3a7b315431577e35 \
-    --hash=sha256:fff47e031e34ec82bf17e00da8f592fe7de69aeea38be00523c04623c04fb666 \
-    --hash=sha256:84729e322ad1d5b4d25f805bfa05b902dd96450f43842c4e99067d5e1369eb25
-certifi==2020.12.5 \
-    --hash=sha256:719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830 \
-    --hash=sha256:1a4995114262bffbc2413b159f2a1a480c969de6e6eb13ee966d470af86af59c
-django-bootstrap4==2.3.1; python_version >= "3.6" and python_version < "4.0" \
-    --hash=sha256:2c199020ac38866cdf8d1c5561ce7468116b9685b455a29843c0225ef8568879 \
-    --hash=sha256:b68f073b647b20ec7894a252a0ca4e06b7b8dafdbad995cb0cdc783d0bb4629d
-django-filter==2.4.0; python_version >= "3.5" \
-    --hash=sha256:84e9d5bb93f237e451db814ed422a3a625751cbc9968b484ecc74964a8696b06 \
-    --hash=sha256:e00d32cebdb3d54273c48f4f878f898dced8d5dfaad009438fe61ebdf535ace1
-django-forms-bootstrap==3.1.0 \
-    --hash=sha256:ffc6d2b9fba03e2366884e82f613daf1284702e9346746e0e9de299db8138d6f \
-    --hash=sha256:50d69baf6c6f262f6ae3651096b52c31552cb75d37493f0c917ce2c16d13f0d9
-django-tables2==2.3.4 \
-    --hash=sha256:50ccadbd13740a996d8a4d4f144ef80134745cd0b5ec278061537e341f5ef7a2 \
-    --hash=sha256:af5f70a9845fd8690c6b44120b065e55b9771cae99c1dcd0eb4f1cfa3f0a71e4
-django==3.2; python_version >= "3.6" \
-    --hash=sha256:0604e84c4fb698a5e53e5857b5aea945b2f19a18f25f10b8748dbdf935788927 \
-    --hash=sha256:21f0f9643722675976004eb683c55d33c05486f94506672df3d6a141546f389d
-mysql-connector-python==8.0.23 \
-    --hash=sha256:5e84dcc25d4b505118e0c28f07de496a41bc0ab121232a2aba83d0248cd49257 \
-    --hash=sha256:f42516ef6b80ce70322f1fda63a8762f898df60df8ba621b2308d933216a8598 \
-    --hash=sha256:eb5d409df6e54c9a8f47dc901334d5e8b30a7967775d6eb3158494bf0534995d \
-    --hash=sha256:320a5929a39cae75a1cf0603b3baffdd7f36a0e520bfdd471d456f70973fc0ac \
-    --hash=sha256:dd7ed6baa35c3a89c6c8c8d6be0ebe1b089e77f41bb874b9dc4bc6db83ad654f \
-    --hash=sha256:2ed23de6c0a9e5769fc14f2930492b81629cb40f79381d79c679ddd04d5f3ddb \
-    --hash=sha256:114ab771b6a1a98ea1e2e88c44fcf3ff713c65ac9fa8d3e88c0034e1fc0aed5d \
-    --hash=sha256:7d55a446700bec300ec6a5b928b4700384bc2add43fa3b9ca124b03640db4e19 \
-    --hash=sha256:a37dff9d748d92134ea47ddbaafdfadb7f3bf9c8a66429ae247fb1ccaf6f7337 \
-    --hash=sha256:2184f6b86c3981e5b2ffa82e946f12368a5f1758f022d9a30f43077950136114 \
-    --hash=sha256:76758ee1d57b712bfbdae358506d578b955fda9dd91ae068a59e0fe02138ef0d \
-    --hash=sha256:0f41b3142fe5325e830a3420915a6cf652b9da1d3a8e0df11bade1c120c0fc2c \
-    --hash=sha256:451120a964d3c56d983c7664f7c799bd92d5660085e3d8058defdec3e8a3b93a \
-    --hash=sha256:efe72ce5e9d9051aeb99a4910949b3afb17570106a980a7a4f480d3894b1f426 \
-    --hash=sha256:a5bf1979c126f475bc10c840d9464d5a2e4604bdc67b6be8bbaf9dbc4a3d8b89 \
-    --hash=sha256:a63658c518502736979dc1a79250c5e54ebbbd5ccfe9ec040cc591fcefbf1974 \
-    --hash=sha256:aa2307ddc30dd20dbca1165ffb1cf41dcf30ae1bcf46e74cb92c06a0eeeb0aac \
-    --hash=sha256:49394f30e792a880ca2bd6e7e9d11eb86df0c316ab629b6d19185c9f5ca0811d \
-    --hash=sha256:7b7fa9ed17a43164df2e203b25bf71f8679460795c055fb23f64a66f7ecde6be \
-    --hash=sha256:faf2aeb18725bb8bb6aae1e33b358d328cd35ded1b610d4c8608529b3051f634 \
-    --hash=sha256:2eabe3f8a264efb3af04cb477943a8c8f04396fda0c5e2ad3450f9c044ddc603 \
-    --hash=sha256:2833d47ad04d08c1d3ab64b3b2b9203f84333f3463ca99332961c0ae1bf8101f \
-    --hash=sha256:c783e1dc8b78a1b1a9ebbf3ccb12d17e4513d91fafeb5b6c06a29f2d5619e285
-mysqlclient==2.0.3; python_version >= "3.5" \
-    --hash=sha256:3381ca1a4f37ff1155fcfde20836b46416d66531add8843f6aa6d968982731c3 \
-    --hash=sha256:0ac0dd759c4ca02c35a9fedc24bc982cf75171651e8187c2495ec957a87dfff7 \
-    --hash=sha256:71c4b330cf2313bbda0307fc858cc9055e64493ba9bf28454d25cf8b3ee8d7f5 \
-    --hash=sha256:fc575093cf81b6605bed84653e48b277318b880dc9becf42dd47fa11ffd3e2b6 \
-    --hash=sha256:f6ebea7c008f155baeefe16c56cd3ee6239f7a5a9ae42396c2f1860f08a7c432
-protobuf==3.14.0 \
-    --hash=sha256:629b03fd3caae7f815b0c66b41273f6b1900a579e2ccb41ef4493a4f5fb84f3a \
-    --hash=sha256:5b7a637212cc9b2bcf85dd828b1178d19efdf74dbfe1ddf8cd1b8e01fdaaa7f5 \
-    --hash=sha256:43b554b9e73a07ba84ed6cf25db0ff88b1e06be610b37656e292e3cbb5437472 \
-    --hash=sha256:5e9806a43232a1fa0c9cf5da8dc06f6910d53e4390be1fa06f06454d888a9142 \
-    --hash=sha256:1c51fda1bbc9634246e7be6016d860be01747354ed7015ebe38acf4452f470d2 \
-    --hash=sha256:4b74301b30513b1a7494d3055d95c714b560fbb630d8fb9956b6f27992c9f980 \
-    --hash=sha256:86a75477addde4918e9a1904e5c6af8d7b691f2a3f65587d73b16100fbe4c3b2 \
-    --hash=sha256:ecc33531a213eee22ad60e0e2aaea6c8ba0021f0cce35dbf0ab03dee6e2a23a1 \
-    --hash=sha256:72230ed56f026dd664c21d73c5db73ebba50d924d7ba6b7c0d81a121e390406e \
-    --hash=sha256:0fc96785262042e4863b3f3b5c429d4636f10d90061e1840fce1baaf59b1a836 \
-    --hash=sha256:4e75105c9dfe13719b7293f75bd53033108f4ba03d44e71db0ec2a0e8401eafd \
-    --hash=sha256:2a7e2fe101a7ace75e9327b9c946d247749e564a267b0515cf41dfe450b69bac \
-    --hash=sha256:b0d5d35faeb07e22a1ddf8dce620860c8fe145426c02d1a0ae2688c6e8ede36d \
-    --hash=sha256:8971c421dbd7aad930c9bd2694122f332350b6ccb5202a8b7b06f3f1a5c41ed5 \
-    --hash=sha256:9616f0b65a30851e62f1713336c931fcd32c057202b7ff2cfbfca0fc7d5e3043 \
-    --hash=sha256:22bcd2e284b3b1d969c12e84dc9b9a71701ec82d8ce975fdda19712e1cfd4e00 \
-    --hash=sha256:0e247612fadda953047f53301a7b0407cb0c3cb4ae25a6fde661597a04039b3c \
-    --hash=sha256:1d63eb389347293d8915fb47bee0951c7b5dab522a4a60118b9a18f33e21f8ce
-pytz==2020.5; python_version >= "3.6" \
-    --hash=sha256:16962c5fb8db4a8f63a26646d8886e9d769b6c511543557bc84e9569fb9a9cb4 \
-    --hash=sha256:180befebb1927b16f6b57101720075a984c019ac16b1b7575673bea42c6c3da5
-sentry-sdk==1.0.0 \
-    --hash=sha256:71de00c9711926816f750bc0f57ef2abbcb1bfbdf5378c601df7ec978f44857a \
-    --hash=sha256:9221e985f425913204989d0e0e1cbb719e8b7fa10540f1bc509f660c06a34e66
-six==1.15.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" \
-    --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced \
-    --hash=sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259
-soupsieve==2.1; python_version >= "3.6" and python_version < "4.0" \
-    --hash=sha256:4bb21a6ee4707bf43b61230e80740e71bfe56e55d1f1f50924b087bb2975c851 \
-    --hash=sha256:6dc52924dc0bc710a5d16794e6b3480b2c7c08b07729505feab2b2c16661ff6e
-sqlparse==0.4.1; python_version >= "3.6" \
-    --hash=sha256:017cde379adbd6a1f15a61873f43e8274179378e95ef3fede90b5aa64d304ed0 \
-    --hash=sha256:0f91fd2e829c44362cbcfab3e9ae12e22badaa8a29ad5ff599f9ec109f0454e8
-urllib3==1.26.4; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version < "4" \
-    --hash=sha256:2f4da4594db7e1e110a944bb1b551fdf4e6c136ad42e4234131391e21eb5b0df \
-    --hash=sha256:e7b021f7241115872f92f43c6508082facffbd1c048e3c6e2bb9c2a157e28937
+# This file was autogenerated by uv via the following command:
+#    uv export --native-tls --no-hashes --extra mysql --no-dev -o requirements.txt
+asgiref==3.12.1
+    # via django
+beautifulsoup4==4.15.0
+    # via django-bootstrap4
+certifi==2026.7.22
+    # via sentry-sdk
+django==6.0.7
+    # via
+    #   cricbox
+    #   django-bootstrap4
+    #   django-filter
+    #   django-tables2
+    #   django-unfold
+django-bootstrap4==26.1
+    # via cricbox
+django-filter==26.1
+    # via cricbox
+django-tables2==3.0.0
+    # via cricbox
+django-unfold==0.101.0
+    # via cricbox
+mysql-connector-python==9.7.0
+    # via cricbox
+mysqlclient==2.2.8
+    # via cricbox
+sentry-sdk==2.66.1
+    # via cricbox
+soupsieve==2.9.1
+    # via beautifulsoup4
+sqlparse==0.5.5
+    # via django
+typing-extensions==4.16.0
+    # via beautifulsoup4
+tzdata==2026.3 ; sys_platform == 'win32'
+    # via django
+urllib3==2.7.0
+    # via sentry-sdk
