@@ -4,41 +4,111 @@
 <section class="page-header">
     <div class="container-page py-10">
         <h1 class="text-3xl font-bold sm:text-4xl">{{ player.full_name }}</h1>
-        <p class="mt-2 text-ink-300">Career Summary</p>
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+            {% if player.get_playing_role_display %}<span class="badge">{{ player.get_playing_role_display }}</span>{% endif %}
+            {% if player.get_batting_style_display %}<span class="badge">Bat: {{ player.get_batting_style_display }}</span>{% endif %}
+            {% if player.get_bowling_style_display %}<span class="badge">Bowl: {{ player.get_bowling_style_display }}</span>{% endif %}
+            {% if player.life_member %}<span class="badge">Life Member</span>{% endif %}
+            <span class="badge">{{ appearances }} appearance{{ appearances|pluralize }}</span>
+        </div>
     </div>
 </section>
 
 <div class="container-page space-y-10 py-8">
-    <div class="card">
-        <h3 class="mb-4 text-lg font-semibold">Player Information</h3>
-        <dl class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Club Joined</dt><dd class="font-medium">{{ player.member_since }}</dd></div>
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Playing Role</dt><dd class="font-medium">{{ player.get_playing_role_display }}</dd></div>
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Batting Style</dt><dd class="font-medium">{{ player.get_batting_style_display }}</dd></div>
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Bowling Style</dt><dd class="font-medium">{{ player.get_bowling_style_display }}</dd></div>
-        </dl>
+    {% if batting_summary %}
+    <div>
+        <h2 class="mb-3 text-lg font-semibold">Batting</h2>
+        <div class="grid grid-cols-3 gap-3 sm:grid-cols-6">
+            <div class="stat-tile"><div class="stat-value">{{ batting_summary.innings }}</div><div class="stat-label">Inns</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ batting_summary.runs_scored }}</div><div class="stat-label">Runs</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ batting_summary.highest }}</div><div class="stat-label">HS</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ batting_summary.average|floatformat:2|default:"—" }}</div><div class="stat-label">Avg</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ batting_summary.fifties }}</div><div class="stat-label">50s</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ batting_summary.hundreds }}</div><div class="stat-label">100s</div></div>
+        </div>
     </div>
+    {% endif %}
+
+    {% if bowling_summary %}
+    <div>
+        <h2 class="mb-3 text-lg font-semibold">Bowling</h2>
+        <div class="grid grid-cols-3 gap-3 sm:grid-cols-6">
+            <div class="stat-tile"><div class="stat-value">{{ bowling_summary.overs }}</div><div class="stat-label">Overs</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ bowling_summary.total_wickets }}</div><div class="stat-label">Wkts</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ bowling_summary.average|floatformat:2|default:"—" }}</div><div class="stat-label">Avg</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ bowling_summary.economy|floatformat:2|default:"—" }}</div><div class="stat-label">Econ</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ bowling_summary.strike_rate|floatformat:2|default:"—" }}</div><div class="stat-label">SR</div></div>
+            <div class="stat-tile"><div class="stat-value">{{ bowling_summary.fives }}</div><div class="stat-label">5w</div></div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if best_batting or best_bowling %}
+    <div class="grid gap-6 sm:grid-cols-2">
+        {% if best_batting %}
+        <div class="card">
+            <div class="stat-label">Highest Score</div>
+            <div class="mt-1 text-3xl font-bold text-ink-900">{{ best_batting.runs }}{% if best_batting.how_out.name == "Not Out" %}*{% endif %}</div>
+            <div class="mt-1 text-sm text-ink-500">vs {{ best_batting.match_statistics.match.opposition }} &middot; {{ best_batting.match_statistics.match.season }}</div>
+        </div>
+        {% endif %}
+        {% if best_bowling %}
+        <div class="card">
+            <div class="stat-label">Best Bowling</div>
+            <div class="mt-1 text-3xl font-bold text-ink-900">{{ best_bowling.figures }}</div>
+            <div class="mt-1 text-sm text-ink-500">vs {{ best_bowling.match_statistics.match.opposition }} &middot; {{ best_bowling.match_statistics.match.season }}</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
 
     <div>
-        <h3 class="mb-4 text-lg font-semibold">Batting Career</h3>
+        <h2 class="mb-4 text-lg font-semibold">Batting Career</h2>
         {% render_table batting %}
     </div>
 
     <div>
-        <h3 class="mb-4 text-lg font-semibold">Bowling Career</h3>
+        <h2 class="mb-4 text-lg font-semibold">Bowling Career</h2>
         {% render_table bowling %}
     </div>
 
-    <div class="card">
-        <h3 class="mb-4 text-lg font-semibold">Career Information</h3>
-        <dl class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">League Debut</dt><dd class="font-medium">{{ match_league | last }}</dd></div>
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last League</dt><dd class="font-medium">{{ match_league | first }}</dd></div>
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Friendly Debut</dt><dd class="font-medium">{{ match_friendly | last }}</dd></div>
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last Friendly</dt><dd class="font-medium">{{ match_friendly | first }}</dd></div>
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">VPCCL Debut</dt><dd class="font-medium">{{ match_vpccl | last }}</dd></div>
-            <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last VPCCL</dt><dd class="font-medium">{{ match_vpccl | first }}</dd></div>
-        </dl>
+    {% if dismissals %}
+    <div>
+        <h2 class="mb-4 text-lg font-semibold">How {{ player.first_name }} Gets Out</h2>
+        <div class="overflow-x-auto rounded-xl border border-ink-100 bg-white shadow-sm">
+            <table class="stats-table">
+                <thead><tr><th>Dismissal</th><th>Count</th><th>%</th></tr></thead>
+                <tbody>
+                    {% for row in dismissals %}
+                    <tr><td>{{ row.dismissal }}</td><td>{{ row.count }}</td><td>{{ row.percent }}%</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="grid gap-6 lg:grid-cols-2">
+        <div class="card">
+            <h2 class="mb-4 text-lg font-semibold">Player Information</h2>
+            <dl class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Club Joined</dt><dd class="font-medium">{{ player.member_since|default:"—" }}</dd></div>
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Playing Role</dt><dd class="font-medium">{{ player.get_playing_role_display|default:"—" }}</dd></div>
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Batting Style</dt><dd class="font-medium">{{ player.get_batting_style_display|default:"—" }}</dd></div>
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Bowling Style</dt><dd class="font-medium">{{ player.get_bowling_style_display|default:"—" }}</dd></div>
+            </dl>
+        </div>
+        <div class="card">
+            <h2 class="mb-4 text-lg font-semibold">Career Information</h2>
+            <dl class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">League Debut</dt><dd class="font-medium">{{ match_league|last|default:"—" }}</dd></div>
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last League</dt><dd class="font-medium">{{ match_league|first|default:"—" }}</dd></div>
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Friendly Debut</dt><dd class="font-medium">{{ match_friendly|last|default:"—" }}</dd></div>
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last Friendly</dt><dd class="font-medium">{{ match_friendly|first|default:"—" }}</dd></div>
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">VPCCL Debut</dt><dd class="font-medium">{{ match_vpccl|last|default:"—" }}</dd></div>
+                <div class="flex justify-between border-b border-ink-100 pb-2"><dt class="text-ink-500">Last VPCCL</dt><dd class="font-medium">{{ match_vpccl|first|default:"—" }}</dd></div>
+            </dl>
+        </div>
     </div>
 </div>
 {% endblock %}

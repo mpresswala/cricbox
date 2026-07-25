@@ -42,6 +42,10 @@ INVALID_PLAYERS = Q(Q(first_name="Extras") | Q(first_name="Unknown") | Q(first_n
 # players like "Wayne Unknown" are unaffected.
 PSEUDO_PLAYER_NAMES = ["extras", "unknown"]
 
+# how_out values that are not actual dismissals (used to build dismissal
+# breakdowns and to count genuine outs).
+NON_DISMISSAL_WICKET_TYPES = ["Not Out", "Did Not Bat", "Unknown", "Retired Hurt", "Retired Out"]
+
 TABLE_ATTRS = {"class": "stats-table"}
 
 SITE_URLS = {

@@ -1,6 +1,6 @@
 from batsman.models import Batsman
 from bowler.models import Bowler
-from cricbox.utils import FIFTIES, FIVERS, HUNDREDS, SITE_URLS
+from cricbox.utils import FIFTIES, FIVERS, HUNDREDS, NON_DISMISSAL_WICKET_TYPES, SITE_URLS
 from match_statistics.models import MatchStatistics
 from player.models import Appointment, Player
 
@@ -30,8 +30,7 @@ from django_tables2.views import MultiTableMixin, SingleTableMixin
 
 # Non-real "players" (byes/extras, unrecorded names) to keep out of records.
 _REAL_PLAYERS = ~Q(player__first_name__in=["Extras", "Unknown"])
-# how_out values that are not actual dismissals.
-_NON_DISMISSALS = ["Not Out", "Did Not Bat", "Unknown", "Retired Hurt", "Retired Out"]
+_NON_DISMISSALS = NON_DISMISSAL_WICKET_TYPES
 
 
 def _season_totals(model, field):

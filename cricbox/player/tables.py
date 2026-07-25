@@ -21,7 +21,6 @@ class PlayersTable(tables.Table):
 
     class Meta:
         attrs = TABLE_ATTRS
-        template_name = "django_tables2/bootstrap4.html"
         sequence = (
             "first_name",
             "member_since",
