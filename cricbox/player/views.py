@@ -11,6 +11,7 @@ from .tables import PlayersTable
 from django.db.models import Count, F, Value
 from django.db.models.functions import Concat
 from django.shortcuts import render
+from django.utils.dateparse import parse_date
 from django.views.generic import TemplateView
 
 import django_filters
@@ -21,16 +22,56 @@ from django_tables2.views import SingleTableMixin
 
 
 _ZERO_BATTING = {
-    "innings": 0, "runs_scored": 0, "not_out": 0, "highest": 0,
-    "average": None, "fifties": 0, "hundreds": 0,
+    "innings": 0,
+    "runs_scored": 0,
+    "not_out": 0,
+    "highest": 0,
+    "average": None,
+    "fifties": 0,
+    "hundreds": 0,
 }
 _ZERO_BOWLING = {
-    "overs": 0, "total_wickets": 0, "average": None,
-    "economy": None, "strike_rate": None, "fives": 0,
+    "overs": 0,
+    "total_wickets": 0,
+    "average": None,
+    "economy": None,
+    "strike_rate": None,
+    "fives": 0,
 }
 
 
-def _player_summary(player_id):
+def _parse_from_date(value):
+    if not value:
+        return None
+    try:
+        return parse_date(value)
+    except ValueError:
+        return None
+
+
+def _parse_player_id(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _appearance_count(player_id, from_date=None):
+    match_filter = {"players__id": player_id}
+    batting_filter = {"player_id": player_id}
+    bowling_filter = {"player_id": player_id}
+    if from_date:
+        match_filter["date__gte"] = from_date
+        batting_filter["match_statistics__match__date__gte"] = from_date
+        bowling_filter["match_statistics__match__date__gte"] = from_date
+
+    match_ids = set(Match.objects.filter(**match_filter).values_list("id", flat=True))
+    match_ids.update(Batsman.objects.filter(**batting_filter).values_list("match_statistics__match_id", flat=True))
+    match_ids.update(Bowler.objects.filter(**bowling_filter).values_list("match_statistics__match_id", flat=True))
+    return len(match_ids)
+
+
+def _player_summary(player_id, from_date=None):
     """Career batting/bowling summary + appearances for one player, or None.
 
     Missing batting/bowling records are zero-filled so a genuine 0 (e.g. no
@@ -40,14 +81,20 @@ def _player_summary(player_id):
     player = Player.objects.filter(id=player_id).first()
     if player is None:
         return None
-    batting = Batsman.stat_objects.filter(player_id=player_id).first() or _ZERO_BATTING
-    bowling = Bowler.stat_objects.filter(player_id=player_id).first()
+    batting_filter = {"player_id": player_id}
+    bowling_filter = {"player_id": player_id}
+    if from_date:
+        batting_filter["match_statistics__match__date__gte"] = from_date
+        bowling_filter["match_statistics__match__date__gte"] = from_date
+
+    batting = Batsman.stat_objects.filter(**batting_filter).first() or _ZERO_BATTING
+    bowling = Bowler.stat_objects.filter(**bowling_filter).first()
     bowling = {**bowling, "overs": balls_to_overs(bowling["total_balls"])} if bowling else _ZERO_BOWLING
     return {
         "player": player,
         "batting": batting,
         "bowling": bowling,
-        "appearances": Match.objects.filter(players__id=player_id).count(),
+        "appearances": _appearance_count(player_id, from_date),
     }
 
 
@@ -57,7 +104,8 @@ def player_search(request):
     results = []
     if query:
         results = (
-            Player.objects.exclude(INVALID_PLAYERS)
+            Player.objects
+            .exclude(INVALID_PLAYERS)
             .annotate(full_name_annotated=Concat("first_name", Value(" "), "last_name"))
             .filter(full_name_annotated__icontains=query)
             .order_by("first_name", "last_name")[:8]
@@ -70,12 +118,26 @@ class PlayerCompareView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["players"] = Player.objects.exclude(INVALID_PLAYERS).order_by("first_name", "last_name")
         a_id = self.request.GET.get("a")
         b_id = self.request.GET.get("b")
+        from_date_raw = self.request.GET.get("from_date", "")
+        from_date = _parse_from_date(from_date_raw)
+        a_selected_id = _parse_player_id(a_id)
+        b_selected_id = _parse_player_id(b_id)
+        context["players"] = [
+            {
+                "id": player.pk,
+                "full_name": player.full_name(),
+                "is_a_selected": player.pk == a_selected_id,
+                "is_b_selected": player.pk == b_selected_id,
+            }
+            for player in Player.objects.exclude(INVALID_PLAYERS).order_by("first_name", "last_name")
+        ]
         context["a_id"], context["b_id"] = a_id, b_id
-        context["a"] = _player_summary(a_id) if a_id else None
-        context["b"] = _player_summary(b_id) if b_id else None
+        context["from_date"] = from_date_raw
+        context["from_date_active"] = from_date
+        context["a"] = _player_summary(a_id, from_date) if a_id else None
+        context["b"] = _player_summary(b_id, from_date) if b_id else None
         return context
 
 
@@ -126,13 +188,15 @@ class ProfileView(TemplateView):
 
         # Personal records: best innings with the bat and ball.
         context["best_batting"] = (
-            Batsman.objects.filter(player_id=player_id)
+            Batsman.objects
+            .filter(player_id=player_id)
             .select_related("how_out", "match_statistics__match__opposition")
             .order_by("-runs")
             .first()
         )
         context["best_bowling"] = (
-            Bowler.objects.filter(player_id=player_id)
+            Bowler.objects
+            .filter(player_id=player_id)
             .select_related("match_statistics__match__opposition")
             .order_by("-wickets", "runs")
             .first()
@@ -140,7 +204,8 @@ class ProfileView(TemplateView):
 
         # How this player gets out.
         dismissals = list(
-            Batsman.objects.filter(player_id=player_id)
+            Batsman.objects
+            .filter(player_id=player_id)
             .exclude(how_out__name__in=NON_DISMISSAL_WICKET_TYPES)
             .values(dismissal=F("how_out__name"))
             .annotate(count=Count("id"))
