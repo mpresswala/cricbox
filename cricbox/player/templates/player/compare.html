@@ -3,19 +3,20 @@
 <section class="page-header">
     <div class="container-page py-10">
         <h1 class="text-3xl font-bold sm:text-4xl">Compare Players</h1>
-        <p class="mt-2 text-ink-300">Pick two players to see their career stats side by side.</p>
+        <p class="mt-2 text-ink-300">Pick two players to see their stats side by side.</p>
     </div>
 </section>
 
 <div class="container-page py-8">
     <form method="get" class="card mb-8">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-[1fr_1fr_12rem_auto] lg:items-end">
             <div>
                 <label class="field-label" for="a">Player A</label>
                 <select id="a" name="a" class="field-input">
                     <option value="">— select —</option>
                     {% for p in players %}
-                    <option value="{{ p.id }}" {% if a_id == p.id|stringformat:"s" %}selected{% endif %}>{{ p.full_name }}</option>
+                    <option value="{{ p.id }}" {% if p.is_a_selected %}selected{% endif %}>{{ p.full_name }}
+                    </option>
                     {% endfor %}
                 </select>
             </div>
@@ -24,15 +25,24 @@
                 <select id="b" name="b" class="field-input">
                     <option value="">— select —</option>
                     {% for p in players %}
-                    <option value="{{ p.id }}" {% if b_id == p.id|stringformat:"s" %}selected{% endif %}>{{ p.full_name }}</option>
+                    <option value="{{ p.id }}" {% if p.is_b_selected %}selected{% endif %}>{{ p.full_name }}
+                    </option>
                     {% endfor %}
                 </select>
+            </div>
+            <div>
+                <label class="field-label" for="from_date">Stats from</label>
+                <input id="from_date" name="from_date" type="date" value="{{ from_date }}" class="field-input">
             </div>
             <button type="submit" class="btn">Compare</button>
         </div>
     </form>
 
     {% if a and b %}
+    {% if from_date_active %}
+    <p class="mb-4 text-sm text-ink-500 dark:text-ink-400">Showing stats from {{ from_date_active|date:"j F Y" }}
+        onwards.</p>
+    {% endif %}
     <div class="table-card">
         <table class="stats-table">
             <thead>
@@ -43,21 +53,77 @@
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Appearances</td><td>{{ a.appearances }}</td><td>{{ b.appearances }}</td></tr>
-                <tr><td colspan="3" class="!bg-ink-100 font-semibold dark:!bg-ink-800">Batting</td></tr>
-                <tr><td>Innings</td><td>{{ a.batting.innings }}</td><td>{{ b.batting.innings }}</td></tr>
-                <tr><td>Runs</td><td>{{ a.batting.runs_scored }}</td><td>{{ b.batting.runs_scored }}</td></tr>
-                <tr><td>Highest</td><td>{{ a.batting.highest }}</td><td>{{ b.batting.highest }}</td></tr>
-                <tr><td>Average</td><td>{{ a.batting.average|floatformat:2|default:"—" }}</td><td>{{ b.batting.average|floatformat:2|default:"—" }}</td></tr>
-                <tr><td>50s</td><td>{{ a.batting.fifties }}</td><td>{{ b.batting.fifties }}</td></tr>
-                <tr><td>100s</td><td>{{ a.batting.hundreds }}</td><td>{{ b.batting.hundreds }}</td></tr>
-                <tr><td colspan="3" class="!bg-ink-100 font-semibold dark:!bg-ink-800">Bowling</td></tr>
-                <tr><td>Overs</td><td>{{ a.bowling.overs }}</td><td>{{ b.bowling.overs }}</td></tr>
-                <tr><td>Wickets</td><td>{{ a.bowling.total_wickets }}</td><td>{{ b.bowling.total_wickets }}</td></tr>
-                <tr><td>Average</td><td>{{ a.bowling.average|floatformat:2|default:"—" }}</td><td>{{ b.bowling.average|floatformat:2|default:"—" }}</td></tr>
-                <tr><td>Economy</td><td>{{ a.bowling.economy|floatformat:2|default:"—" }}</td><td>{{ b.bowling.economy|floatformat:2|default:"—" }}</td></tr>
-                <tr><td>Strike rate</td><td>{{ a.bowling.strike_rate|floatformat:2|default:"—" }}</td><td>{{ b.bowling.strike_rate|floatformat:2|default:"—" }}</td></tr>
-                <tr><td>5 wickets</td><td>{{ a.bowling.fives }}</td><td>{{ b.bowling.fives }}</td></tr>
+                <tr>
+                    <td>Appearances</td>
+                    <td>{{ a.appearances }}</td>
+                    <td>{{ b.appearances }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="!bg-ink-100 font-semibold dark:!bg-ink-800">Batting</td>
+                </tr>
+                <tr>
+                    <td>Innings</td>
+                    <td>{{ a.batting.innings }}</td>
+                    <td>{{ b.batting.innings }}</td>
+                </tr>
+                <tr>
+                    <td>Runs</td>
+                    <td>{{ a.batting.runs_scored }}</td>
+                    <td>{{ b.batting.runs_scored }}</td>
+                </tr>
+                <tr>
+                    <td>Highest</td>
+                    <td>{{ a.batting.highest }}</td>
+                    <td>{{ b.batting.highest }}</td>
+                </tr>
+                <tr>
+                    <td>Average</td>
+                    <td>{{ a.batting.average|floatformat:2|default:"—" }}</td>
+                    <td>{{ b.batting.average|floatformat:2|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <td>50s</td>
+                    <td>{{ a.batting.fifties }}</td>
+                    <td>{{ b.batting.fifties }}</td>
+                </tr>
+                <tr>
+                    <td>100s</td>
+                    <td>{{ a.batting.hundreds }}</td>
+                    <td>{{ b.batting.hundreds }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="!bg-ink-100 font-semibold dark:!bg-ink-800">Bowling</td>
+                </tr>
+                <tr>
+                    <td>Overs</td>
+                    <td>{{ a.bowling.overs }}</td>
+                    <td>{{ b.bowling.overs }}</td>
+                </tr>
+                <tr>
+                    <td>Wickets</td>
+                    <td>{{ a.bowling.total_wickets }}</td>
+                    <td>{{ b.bowling.total_wickets }}</td>
+                </tr>
+                <tr>
+                    <td>Average</td>
+                    <td>{{ a.bowling.average|floatformat:2|default:"—" }}</td>
+                    <td>{{ b.bowling.average|floatformat:2|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <td>Economy</td>
+                    <td>{{ a.bowling.economy|floatformat:2|default:"—" }}</td>
+                    <td>{{ b.bowling.economy|floatformat:2|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <td>Strike rate</td>
+                    <td>{{ a.bowling.strike_rate|floatformat:2|default:"—" }}</td>
+                    <td>{{ b.bowling.strike_rate|floatformat:2|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <td>5 wickets</td>
+                    <td>{{ a.bowling.fives }}</td>
+                    <td>{{ b.bowling.fives }}</td>
+                </tr>
             </tbody>
         </table>
     </div>
