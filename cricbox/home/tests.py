@@ -97,3 +97,32 @@ class TableSortingTests(TestCase):
                         500,
                         msg=f"{name}?sort={column} returned {response.status_code}",
                     )
+
+
+class ThemeTemplateRegressionTests(TestCase):
+    def test_records_page_section_headings_have_dark_mode_contrast_class(self):
+        response = self.client.get(reverse("site-records"))
+
+        self.assertEqual(response.status_code, 200)
+        for heading in (
+            "Highest Individual Scores",
+            "Best Bowling Figures",
+            "Most Runs in a Season",
+            "Most Wickets in a Season",
+            "Highest Team Totals",
+        ):
+            with self.subTest(heading=heading):
+                self.assertContains(
+                    response,
+                    f'<h2 class="mb-4 text-xl font-bold text-ink-900 dark:text-ink-100">{heading}</h2>',
+                    html=True,
+                )
+
+    def test_header_theme_toggle_stays_inside_responsive_header(self):
+        response = self.client.get(reverse("site-home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'aria-label="Toggle dark mode"')
+        self.assertContains(response, "border border-ink-700 bg-ink-800 p-2 text-white")
+        self.assertContains(response, "xl:flex")
+        self.assertContains(response, "xl:hidden")

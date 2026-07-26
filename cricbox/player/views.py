@@ -4,11 +4,12 @@ from bowler.models import Bowler
 from bowler.tables import BowlersTable
 from cricbox.utils import INVALID_PLAYERS, NON_DISMISSAL_WICKET_TYPES, balls_to_overs
 from match.models import Match
+from match_statistics.models import MatchStatistics
 
 from .models import Player
 from .tables import PlayersTable
 
-from django.db.models import Count, F, Value
+from django.db.models import Count, F, Q, Value
 from django.db.models.functions import Concat
 from django.shortcuts import render
 from django.utils.dateparse import parse_date
@@ -99,9 +100,10 @@ def _player_summary(player_id, from_date=None):
 
 
 def player_search(request):
-    """HTMX type-ahead: return a small list of players matching ?q=."""
+    """HTMX type-ahead: return players and match reports matching ?q=."""
     query = request.GET.get("q", "").strip()
     results = []
+    report_results = []
     if query:
         results = (
             Player.objects
@@ -110,7 +112,22 @@ def player_search(request):
             .filter(full_name_annotated__icontains=query)
             .order_by("first_name", "last_name")[:8]
         )
-    return render(request, "player/_search_results.html", {"results": results, "query": query})
+        report_results = (
+            MatchStatistics.objects
+            .select_related("match__opposition")
+            .filter(
+                Q(report_headline__icontains=query)
+                | Q(report__icontains=query)
+                | Q(match__opposition__name__icontains=query)
+            )
+            .exclude(Q(report_headline__isnull=True) | Q(report_headline=""))
+            .order_by("-match__date")[:8]
+        )
+    return render(
+        request,
+        "player/_search_results.html",
+        {"results": results, "report_results": report_results, "query": query},
+    )
 
 
 class PlayerCompareView(TemplateView):
