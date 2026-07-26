@@ -1,3 +1,7 @@
+from cricbox.filter_widgets import DatalistTextInput
+from opposition.models import Opposition
+from venue.models import Venue
+
 from .models import MatchStatistics
 from .tables import (
     BattingTable,
@@ -19,13 +23,20 @@ from django_tables2.views import SingleTableMixin
 # Create your views here.
 class OppositionFilter(django_filters.FilterSet):
     season = django_filters.RangeFilter(field_name="match__season")
+    match__venue__name__icontains = django_filters.CharFilter(
+        field_name="match__venue__name",
+        lookup_expr="icontains",
+        widget=DatalistTextInput(
+            "season-opposition-venue-options",
+            lambda: Venue.objects.order_by("name").values_list("name", flat=True).distinct(),
+        ),
+    )
 
     class Meta:
         model = MatchStatistics
         fields = {
             "match__mtype": ["exact"],
             "match__home_or_away": ["exact"],
-            "match__venue__name": ["icontains"],
         }
 
     def __init__(self, **kwargs):
@@ -37,13 +48,20 @@ class OppositionFilter(django_filters.FilterSet):
 
 class VenueFilter(django_filters.FilterSet):
     season = django_filters.RangeFilter(field_name="match__season")
+    match__opposition__name__icontains = django_filters.CharFilter(
+        field_name="match__opposition__name",
+        lookup_expr="icontains",
+        widget=DatalistTextInput(
+            "season-venue-opposition-options",
+            lambda: Opposition.objects.order_by("name").values_list("name", flat=True).distinct(),
+        ),
+    )
 
     class Meta:
         model = MatchStatistics
         fields = {
             "match__mtype": ["exact"],
             "match__home_or_away": ["exact"],
-            "match__opposition__name": ["icontains"],
         }
 
     def __init__(self, **kwargs):
@@ -54,13 +72,28 @@ class VenueFilter(django_filters.FilterSet):
 
 
 class SeasonFilter(django_filters.FilterSet):
+    match__opposition__name__icontains = django_filters.CharFilter(
+        field_name="match__opposition__name",
+        lookup_expr="icontains",
+        widget=DatalistTextInput(
+            "season-overview-opposition-options",
+            lambda: Opposition.objects.order_by("name").values_list("name", flat=True).distinct(),
+        ),
+    )
+    match__venue__name__icontains = django_filters.CharFilter(
+        field_name="match__venue__name",
+        lookup_expr="icontains",
+        widget=DatalistTextInput(
+            "season-overview-venue-options",
+            lambda: Venue.objects.order_by("name").values_list("name", flat=True).distinct(),
+        ),
+    )
+
     class Meta:
         model = MatchStatistics
         fields = {
             "match__mtype": ["exact"],
             "match__home_or_away": ["exact"],
-            "match__opposition__name": ["icontains"],
-            "match__venue__name": ["icontains"],
         }
 
     def __init__(self, **kwargs):
@@ -84,7 +117,8 @@ class SeasonView(SingleTableMixin, FilterView):
         draw = Count("result", filter=Q(result__name="Drawn"))
 
         return (
-            self.model.objects.values("match__season")
+            MatchStatistics.objects
+            .values("match__season")
             .annotate(
                 played=Count("match"),
                 won=won,
@@ -115,7 +149,8 @@ class OppositionView(SingleTableMixin, FilterView):
         draw = Count("result", filter=Q(result__name="Drawn"))
 
         return (
-            self.model.objects.values("match__opposition__name", "match__opposition_id")
+            MatchStatistics.objects
+            .values("match__opposition__name", "match__opposition_id")
             .annotate(
                 played=Count("match"),
                 won=won,
@@ -146,7 +181,8 @@ class VenuesView(SingleTableMixin, FilterView):
         draw = Count("result", filter=Q(result__name="Drawn"))
 
         return (
-            self.model.objects.values("match__venue__name", "match__venue_id")
+            MatchStatistics.objects
+            .values("match__venue__name", "match__venue_id")
             .annotate(
                 played=Count("match"),
                 won=won,

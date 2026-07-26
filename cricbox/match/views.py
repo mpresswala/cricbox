@@ -1,4 +1,8 @@
-from cricbox.utils import PSEUDO_PLAYER_NAMES
+from cricbox.filter_widgets import DatalistTextInput
+from cricbox.utils import INVALID_PLAYERS, PSEUDO_PLAYER_NAMES
+from opposition.models import Opposition
+from player.models import Player
+from venue.models import Venue
 
 from .models import Match
 from .tables import AppearancesTable, FixturesTable
@@ -13,16 +17,49 @@ from django_tables2.views import SingleTableMixin
 
 
 # Create your views here.
+def _filter_player_full_name(queryset, _name, _value):
+    # Applied after grouping in AppearancesView.get_queryset().
+    return queryset
+
+
 class AppearancesFilter(django_filters.FilterSet):
+    opposition__name__icontains = django_filters.CharFilter(
+        field_name="opposition__name",
+        lookup_expr="icontains",
+        widget=DatalistTextInput(
+            "appearances-opposition-options",
+            lambda: Opposition.objects.order_by("name").values_list("name", flat=True).distinct(),
+        ),
+    )
+    venue__name__icontains = django_filters.CharFilter(
+        field_name="venue__name",
+        lookup_expr="icontains",
+        widget=DatalistTextInput(
+            "appearances-venue-options",
+            lambda: Venue.objects.order_by("name").values_list("name", flat=True).distinct(),
+        ),
+    )
+    players__first_name__icontains = django_filters.CharFilter(
+        method=_filter_player_full_name,
+        widget=DatalistTextInput(
+            "appearances-player-options",
+            lambda: (
+                Player.objects
+                .exclude(INVALID_PLAYERS)
+                .annotate(full_name=Concat("first_name", V(" "), "last_name"))
+                .order_by("first_name", "last_name")
+                .values_list("full_name", flat=True)
+                .distinct()
+            ),
+        ),
+    )
+
     class Meta:
         model = Match
         fields = {
             "season": ["icontains"],
             "mtype": ["exact"],
             "home_or_away": ["exact"],
-            "opposition__name": ["icontains"],
-            "venue__name": ["icontains"],
-            "players__first_name": ["icontains"],
         }
 
     def __init__(self, **kwargs):
@@ -36,13 +73,28 @@ class AppearancesFilter(django_filters.FilterSet):
 
 
 class FixturesFilter(django_filters.FilterSet):
+    opposition__name__icontains = django_filters.CharFilter(
+        field_name="opposition__name",
+        lookup_expr="icontains",
+        widget=DatalistTextInput(
+            "fixtures-opposition-options",
+            lambda: Opposition.objects.order_by("name").values_list("name", flat=True).distinct(),
+        ),
+    )
+    venue__name__icontains = django_filters.CharFilter(
+        field_name="venue__name",
+        lookup_expr="icontains",
+        widget=DatalistTextInput(
+            "fixtures-venue-options",
+            lambda: Venue.objects.order_by("name").values_list("name", flat=True).distinct(),
+        ),
+    )
+
     class Meta:
         model = Match
         fields = {
             "mtype": ["exact"],
             "home_or_away": ["exact"],
-            "opposition__name": ["icontains"],
-            "venue__name": ["icontains"],
             "season": ["icontains"],
         }
 
@@ -65,8 +117,9 @@ class AppearancesView(SingleTableMixin, FilterView):
         # Drop the "Extras"/"Unknown" pseudo-players. Match on a normalised
         # (trimmed, lower-cased) name so e.g. "Extras " (no last name) is caught,
         # while real players such as "Wayne Unknown" are kept.
-        return (
-            Match.objects.values(
+        queryset = (
+            Match.objects
+            .values(
                 "players__id",
                 players__full_name=Concat("players__first_name", V(" "), "players__last_name"),
             )
@@ -75,6 +128,10 @@ class AppearancesView(SingleTableMixin, FilterView):
             .exclude(normalised_name__in=PSEUDO_PLAYER_NAMES)
             .order_by("-appearances")
         )
+        player_query = self.request.GET.get("players__first_name__icontains", "").strip()
+        if player_query:
+            queryset = queryset.filter(players__full_name__icontains=player_query)
+        return queryset
 
 
 class FixtureView(SingleTableMixin, FilterView):

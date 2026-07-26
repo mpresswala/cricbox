@@ -55,7 +55,7 @@
                 <!-- Player search (desktop) -->
                 <div class="relative hidden w-48 xl:block 2xl:w-56" x-data="{ open: false }"
                     @click.outside="open = false">
-                    <input type="search" name="q" placeholder="Search players…" autocomplete="off"
+                    <input type="search" name="q" placeholder="Search players or reports…" autocomplete="off"
                         class="w-full rounded-md border border-ink-700 bg-ink-800 px-3 py-1.5 text-sm text-white placeholder-ink-400 focus:outline-none focus:ring-1 focus:ring-brand-500"
                         hx-get="{% url 'player-search' %}" hx-trigger="keyup changed delay:250ms, focus"
                         hx-target="#player-search-results" hx-swap="innerHTML" @focus="open = true"
