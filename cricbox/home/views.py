@@ -22,6 +22,7 @@ from .tables import (
 
 from django.db.models import Count, F, Q, Sum, Value
 from django.db.models.functions import Concat
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import TemplateView
@@ -33,6 +34,14 @@ from django_tables2.views import MultiTableMixin, SingleTableMixin
 # Non-real "players" (byes/extras, unrecorded names) to keep out of records.
 _REAL_PLAYERS = ~Q(player__first_name__in=["Extras", "Unknown"])
 _NON_DISMISSALS = NON_DISMISSAL_WICKET_TYPES
+
+
+def healthz(request):
+    # Deliberately does no DB work — platform health checks (Fly.io, etc.)
+    # poll this every few seconds, and this app runs on a single worker with
+    # a handful of threads, so a heavier check would eat into real request
+    # capacity for no benefit.
+    return HttpResponse("ok")
 
 
 def _season_totals(model, field):

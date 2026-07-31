@@ -56,6 +56,25 @@ Which variables you need depends on the settings module you run.
 | `LITESTREAM_ACCESS_KEY_ID` | for backups | Access key scoped to the bucket |
 | `LITESTREAM_SECRET_ACCESS_KEY` | for backups | Secret key |
 
+**`cricbox.settings_fly`** — Fly.io (SQLite on a Fly Volume):
+
+| Variable | Required | Notes |
+| --- | --- | --- |
+| `DJANGO_SETTINGS_MODULE` | yes | `cricbox.settings_fly` |
+| `DJANGO_SECRET_KEY` | yes | Set with `fly secrets set` |
+| `DJANGO_DATA_DIR` | no | Volume mount holding the DB + media (default `/var/data`, matching Render) |
+| `DJANGO_ALLOWED_HOSTS` | no | Comma-separated custom domains; the `*.fly.dev` host is added automatically |
+| `FLY_APP_NAME` | auto | Set by Fly |
+| `DJANGO_ADMIN_EMAIL` | no | Who gets emailed on an unhandled 500 (default `muffizone@gmail.com`) |
+| `DJANGO_EMAIL_HOST` | no | SMTP host for error emails; if unset, error mail is only logged, not sent |
+| `DJANGO_EMAIL_PORT` | no | SMTP port (default `587`) |
+| `DJANGO_EMAIL_HOST_USER` / `DJANGO_EMAIL_HOST_PASSWORD` | no | SMTP credentials |
+| `DJANGO_EMAIL_USE_TLS` | no | `true`/`false` (default `true`) |
+| `DJANGO_DEFAULT_FROM_EMAIL` | no | From: address on error emails |
+
+Same `LITESTREAM_*` variables as Render, above, apply here too — the Docker
+entrypoint and `litestream.yml` aren't platform-specific.
+
 **`cricbox.settings_local`** — local SQLite dev — needs no environment variables.
 
 ### Frontend (Tailwind CSS)
@@ -161,6 +180,84 @@ than swapping the file underneath a live service. In rough order of preference:
 
 Finally, create an admin user:
 `render ssh <service> -- .venv/bin/python cricbox/manage.py createsuperuser`.
+
+## Hosting on Fly.io (SQLite on a Fly Volume, with Litestream)
+
+An alternative to Render, using the same `Dockerfile` unchanged. `fly.toml`
+runs the app as a single Machine with a **Fly Volume** holding the SQLite
+database and uploaded media, mounted at `/var/data` — the same path Render
+uses, so `docker-entrypoint.sh` and `litestream.yml` need no changes between
+the two platforms. Settings live in `cricbox/settings_fly.py`. The default
+`fly.toml` requests a `shared-cpu-2x` Machine (2 shared vCPUs, 1GB RAM), which
+is more CPU and RAM than Render's Starter plan for less money — see
+`fly scale vm` to change it later.
+
+**First deploy**
+
+1. [Install `flyctl`](https://fly.io/docs/flyctl/install/) and `fly auth login`.
+2. Create an object-storage bucket for backups (AWS S3, or Backblaze B2) and
+   an access key/secret scoped to it, if you don't already have the one from
+   Render.
+3. From the repo root:
+   ```
+   fly apps create cricbox                              # or your preferred name — must match `app` in fly.toml
+   fly volumes create cricbox_data --region lhr --size 1  # 1GB, same size as the Render disk
+   ```
+4. Set secrets (nothing here is committed to the repo):
+   ```
+   fly secrets set DJANGO_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(50))')"
+   fly secrets set DJANGO_ALLOWED_HOSTS=<your-custom-domain>   # optional; *.fly.dev works out of the box
+   fly secrets set LITESTREAM_BUCKET=... LITESTREAM_REGION=... \
+     LITESTREAM_ACCESS_KEY_ID=... LITESTREAM_SECRET_ACCESS_KEY=...
+   fly secrets set LITESTREAM_ENDPOINT=...   # only for B2/R2; omit for AWS S3
+   # Error-email settings (optional — omit and 500s are just logged, not emailed):
+   fly secrets set DJANGO_EMAIL_HOST=... DJANGO_EMAIL_HOST_USER=... DJANGO_EMAIL_HOST_PASSWORD=...
+   ```
+5. `fly deploy`. On boot the container restores the DB from the Litestream
+   replica if the volume is empty, runs `migrate`, then serves the app via
+   gunicorn wrapped in `litestream replicate` — identical boot sequence to
+   Render. Fly's health check hits `/healthz` (no DB query, so it doesn't
+   compete with real traffic for one of the app's 4 gunicorn threads).
+
+**Uploading your existing data (one-off)**
+
+Same principle as the Render migration below: prefer writing **through the
+running database** so Litestream replication picks the data up, rather than
+swapping the file underneath a live service.
+
+1. **`loaddata` over Fly SSH (recommended, Litestream-safe).**
+   Export the app data on the source site (skip framework tables and the
+   view-backed models):
+   ```
+   python cricbox/manage.py dumpdata \
+     batsman.Batsman batsman.WicketType bowler.Bowler match player \
+     opposition venue match_statistics \
+     --natural-primary --natural-foreign --indent 2 > data.json
+   ```
+   Copy it up and load it:
+   ```
+   fly ssh sftp put data.json /tmp/data.json
+   fly ssh console -C ".venv/bin/python cricbox/manage.py loaddata /tmp/data.json"
+   ```
+
+2. **Seed the Litestream bucket, let Fly restore it.** Build a ready
+   `db.sqlite3` locally (from a Render volume copy, a MySQL dump via
+   `scripts/build_sqlite_from_mysql.sh`, or the `backup` command below), then
+   push it to the same bucket the app expects — the empty volume triggers an
+   automatic restore on first boot:
+   ```
+   litestream replicate db.sqlite3 s3://<bucket>/cricbox   # leave ~30s, then stop
+   ```
+
+3. **Direct file copy (no Litestream).** Only if replication isn't enabled yet:
+   ```
+   fly ssh sftp put db.sqlite3 /var/data/db.sqlite3
+   ```
+   (remove any stale `-wal`/`-shm` files on the volume first via
+   `fly ssh console`).
+
+Finally, create an admin user:
+`fly ssh console -C ".venv/bin/python cricbox/manage.py createsuperuser"`.
 
 ## Backups
 
