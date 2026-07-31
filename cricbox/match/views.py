@@ -117,8 +117,16 @@ class AppearancesView(SingleTableMixin, FilterView):
         # Drop the "Extras"/"Unknown" pseudo-players. Match on a normalised
         # (trimmed, lower-cased) name so e.g. "Extras " (no last name) is caught,
         # while real players such as "Wayne Unknown" are kept.
+        #
+        # Matches with no players recorded yet (e.g. future fixtures) must be
+        # excluded *before* grouping: the M2M join otherwise produces a single
+        # collapsed row with players__id=NULL, which survives the
+        # normalised_name exclude() below (NULL never matches IN/NOT IN in
+        # SQL) and then blows up the "player-profile" linkify with
+        # NoReverseMatch since it has no id to link to.
         queryset = (
             Match.objects
+            .filter(players__isnull=False)
             .values(
                 "players__id",
                 players__full_name=Concat("players__first_name", V(" "), "players__last_name"),
