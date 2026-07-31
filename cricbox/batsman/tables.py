@@ -8,13 +8,13 @@ import django_tables2 as tables
 
 class BatsmenTable(tables.Table):
     player_full_name = tables.Column(
-        linkify=("player-profile", [tables.A("player_id")]),
+        linkify=("player-profile", [tables.A("player_id")]),  # pyright: ignore[reportArgumentType]
         verbose_name="Player",
     )
     innings = tables.Column(
         order_by=("innings", "player_full_name"),
         verbose_name="Inns",
-        linkify=("batsman-stats", [tables.A("player_id")]),
+        linkify=("batsman-stats", [tables.A("player_id")]),  # pyright: ignore[reportArgumentType]
     )
     runs_scored = tables.Column(order_by=("runs_scored", "player_full_name"), verbose_name="Runs")
     not_out = tables.Column(order_by=("not_out", "player_full_name"), verbose_name="NO")
@@ -47,7 +47,7 @@ class BatsmanTable(tables.Table):
     )
     match_season = tables.Column(accessor="match_statistics__match__season", verbose_name="Season")
     match_type = tables.Column(accessor="match_statistics__match__mtype", verbose_name="Type")
-    result = tables.Column(accessor="match_statistics__get_result_display", verbose_name="Result")
+    result = tables.Column(accessor="match_statistics__result__name", verbose_name="Result")
 
     class Meta:
         attrs = TABLE_ATTRS
