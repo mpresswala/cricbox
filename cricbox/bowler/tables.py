@@ -6,7 +6,7 @@ import django_tables2 as tables
 
 class BowlersTable(tables.Table):
     player_full_name = tables.Column(
-        linkify=("player-profile", [tables.A("player_id")]),
+        linkify=("player-profile", [tables.A("player_id")]),  # pyright: ignore[reportArgumentType]
         verbose_name="Player",
     )
     overs = CareerOversColumn(
@@ -21,7 +21,7 @@ class BowlersTable(tables.Table):
     matches = tables.Column(
         order_by=("matches", "player_full_name"),
         verbose_name="Inn",
-        linkify=("bowling-stats-name", [tables.A("player_id")]),
+        linkify=("bowling-stats-name", [tables.A("player_id")]),  # pyright: ignore[reportArgumentType]
     )
     fours = tables.Column(verbose_name="4w")
     fives = tables.Column(verbose_name="5w")
@@ -67,7 +67,7 @@ class BowlerTable(tables.Table):
     strike_rate = tables.Column(orderable=False)
     match_season = tables.Column(accessor="match_statistics__match__season", verbose_name="Season")
     match_type = tables.Column(accessor="match_statistics__match__mtype", verbose_name="Type")
-    result = tables.Column(accessor="match_statistics__get_result_display", verbose_name="Result")
+    result = tables.Column(accessor="match_statistics__result__name", verbose_name="Result")
 
     class Meta:
         attrs = TABLE_ATTRS
