@@ -36,7 +36,11 @@ class NotablePerformancesTable(tables.Table):
 
 
 class VeteransTable(tables.Table):
-    full_name = tables.Column(linkify=("player-profile", [tables.A("id")]), verbose_name="Player Name")
+    full_name = tables.Column(
+        linkify=("player-profile", [tables.A("id")]),
+        verbose_name="Player Name",
+        order_by=("first_name", "last_name"),
+    )
     member_since = tables.Column(accessor="member_since", verbose_name="Member Since")
 
     class Meta:
