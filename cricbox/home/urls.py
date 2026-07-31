@@ -7,6 +7,7 @@ from .views import (
     RecordsView,
     about,
     handbook,
+    healthz,
     history,
     home,
     links,
@@ -18,6 +19,7 @@ from django.urls import path
 
 urlpatterns = [
     path("", home, name="site-home"),
+    path("healthz", healthz, name="healthz"),
     path("about/", about, name="site-about"),
     path("history/", history, name="site-history"),
     path("links/", links, name="site-links"),
