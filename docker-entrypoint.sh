@@ -21,4 +21,9 @@ if [ -n "${LITESTREAM_BUCKET:-}" ]; then
   litestream replicate || echo "litestream: replication stopped — site still serving" &
 fi
 
-exec .venv/bin/gunicorn cricbox.wsgi:application --chdir cricbox --bind "0.0.0.0:${PORT:-8000}"
+# One worker process (this instance only has one CPU to give it), but with
+# 4 threads so a slow request (slow query, stalled external call, etc.)
+# doesn't block every other visitor behind it. Requires --worker-class
+# gthread — the default sync worker ignores --threads entirely.
+exec .venv/bin/gunicorn cricbox.wsgi:application --chdir cricbox --bind "0.0.0.0:${PORT:-8000}" \
+  --worker-class gthread --workers 1 --threads 4
