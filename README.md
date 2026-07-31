@@ -23,29 +23,12 @@ Django 6.0 and requires Python 3.12+.
 
 ```
 uv sync                     # create .venv and install runtime + dev dependencies
-uv sync --extra mysql       # also install the MySQL drivers (production)
 uv run python cricbox/manage.py <command>
 ```
-
-The MySQL drivers live in an optional `mysql` extra so local development (which
-uses SQLite) does not need to build `mysqlclient`.
 
 ### Environment variables
 
 Which variables you need depends on the settings module you run.
-
-**`cricbox.settings`** — legacy production on MySQL:
-
-| Variable | Required | Notes |
-| --- | --- | --- |
-| `DJANGO_SETTINGS_MODULE` | yes | `cricbox.settings` |
-| `DJANGO_SECRET_KEY` | yes | Django secret key |
-| `DJANGO_CRICBOX_PATH` | yes | Absolute path to the Django root (used for `MEDIA_ROOT`) |
-| `DJANGO_DB_DATABASE` | yes | MySQL database name |
-| `DJANGO_DB_HOSTNAME` | yes | MySQL host |
-| `DJANGO_DB_USERNAME` | yes | MySQL user |
-| `DJANGO_DB_PASSWORD` | yes | MySQL password |
-| `DJANGO_LOG_LEVEL` | no | Django log level (default `INFO`) |
 
 **`cricbox.settings_render`** — Render (SQLite on a disk):
 
@@ -56,6 +39,12 @@ Which variables you need depends on the settings module you run.
 | `DJANGO_DATA_DIR` | no | Disk mount holding the DB + media (default `/var/data`) |
 | `DJANGO_ALLOWED_HOSTS` | no | Comma-separated custom domains; the `*.onrender.com` host is added automatically |
 | `RENDER_EXTERNAL_HOSTNAME` | auto | Set by Render |
+| `DJANGO_ADMIN_EMAIL` | no | Who gets emailed on an unhandled 500 (default `muffizone@gmail.com`) |
+| `DJANGO_EMAIL_HOST` | no | SMTP host for error emails; if unset, error mail is only logged, not sent |
+| `DJANGO_EMAIL_PORT` | no | SMTP port (default `587`) |
+| `DJANGO_EMAIL_HOST_USER` / `DJANGO_EMAIL_HOST_PASSWORD` | no | SMTP credentials |
+| `DJANGO_EMAIL_USE_TLS` | no | `true`/`false` (default `true`) |
+| `DJANGO_DEFAULT_FROM_EMAIL` | no | From: address on error emails |
 
 **Litestream** — continuous backup (read by the Docker entrypoint / `litestream.yml`):
 
@@ -68,17 +57,6 @@ Which variables you need depends on the settings module you run.
 | `LITESTREAM_SECRET_ACCESS_KEY` | for backups | Secret key |
 
 **`cricbox.settings_local`** — local SQLite dev — needs no environment variables.
-
-Example for the legacy MySQL production settings:
-```
-export DJANGO_SETTINGS_MODULE=cricbox.settings
-export DJANGO_CRICBOX_PATH=<path-to-django-root-directory>
-export DJANGO_SECRET_KEY=<secret-key>
-export DJANGO_DB_DATABASE=<db-name>
-export DJANGO_DB_HOSTNAME=<db-host>
-export DJANGO_DB_USERNAME=<db-user>
-export DJANGO_DB_PASSWORD=<db-password>
-```
 
 ### Frontend (Tailwind CSS)
 
@@ -106,69 +84,6 @@ A SQLite-backed settings module is provided so the app can run without MySQL:
 DJANGO_SETTINGS_MODULE=cricbox.settings_local uv run python cricbox/manage.py migrate
 DJANGO_SETTINGS_MODULE=cricbox.settings_local uv run python cricbox/manage.py runserver
 ```
-
-## Deployment & migration steps
-
-These are the steps to deploy this version, including upgrading an existing
-install (which previously ran Django 3.1 and Poetry). **Back up the database
-before upgrading.**
-
-1. **Install prerequisites** — Python 3.12+, [uv](https://docs.astral.sh/uv/),
-   and Node.js (only needed to build the CSS, not at runtime).
-
-2. **Back up the production database.**
-
-   ```
-   mysqldump -h <host> -u <user> -p <database> > backup_$(date +%Y%m%d).sql
-   ```
-
-3. **Fetch the code and install dependencies** (including the MySQL drivers):
-
-   ```
-   git pull
-   uv sync --extra mysql
-   ```
-
-4. **Set the environment variables** listed under *Environment Variables
-   Settings* above (`DJANGO_SETTINGS_MODULE=cricbox.settings`, secret key,
-   database credentials, etc.).
-
-5. **Apply database migrations:**
-
-   ```
-   uv run python cricbox/manage.py migrate
-   ```
-
-   Notes:
-   - The Django 3.1 → 6.0 jump applies cleanly; there are no destructive
-     operations. Run against the backup first if you want to rehearse it.
-   - `batsman.0002_require_runs_and_how_out` is a form-level change only
-     (`blank`), so it makes no schema change — it is applied/recorded but
-     issues no `ALTER TABLE`.
-   - The `home.0002_add_sql_views` migration (re)creates the
-     `batsmen_all_seasons` / `bowler_all_seasons` SQL views. On a fresh
-     database it is ordered to run after all table changes; on an existing
-     database it is already applied and will not re-run.
-
-6. **Build the frontend assets and collect static files:**
-
-   ```
-   npm install
-   npm run build:css
-   uv run python cricbox/manage.py collectstatic --noinput
-   ```
-
-7. **Create/verify the admin user** (if needed) and **restart the app server**
-   (Apache/WSGI, gunicorn, etc.).
-
-8. **Smoke-check** the deploy:
-
-   ```
-   uv run python cricbox/manage.py check --deploy
-   ```
-
-To roll back, redeploy the previous revision and restore the database from the
-backup taken in step 2.
 
 ## Hosting on Render (SQLite on a persistent disk, with Litestream)
 

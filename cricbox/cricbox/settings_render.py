@@ -29,6 +29,27 @@ if _render_host:
 
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS]
 
+# Who gets emailed when a request raises an unhandled 500. Defaults to
+# Mufaddal's address; override with DJANGO_ADMIN_EMAIL if needed.
+ADMINS = [("Mufaddal", os.environ.get("DJANGO_ADMIN_EMAIL", "muffizone@gmail.com"))]
+MANAGERS = ADMINS
+
+# SMTP is optional: if DJANGO_EMAIL_HOST isn't set, mail is written to the
+# console log instead of sent, so a missing/incomplete env var never breaks
+# the site — it just means error emails silently don't go out.
+EMAIL_HOST = os.environ.get("DJANGO_EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("DJANGO_EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("DJANGO_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("DJANGO_EMAIL_USE_TLS", "true").lower() == "true"
+DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "cricbox@example.com")
+SERVER_EMAIL = DEFAULT_FROM_EMAIL  # From: address on Django's error emails
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend"
+    if EMAIL_HOST
+    else "django.core.mail.backends.console.EmailBackend"
+)
+
 INSTALLED_APPS = [
     "match_statistics.apps.MatchStatisticsConfig",
     "batsman.apps.BatsmanConfig",
@@ -141,8 +162,24 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        # Emails ADMINS the full traceback + request data on any unhandled
+        # 500, the same detail Django shows on the DEBUG error page.
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+            "include_html": True,
+        },
+    },
     "root": {"handlers": ["console"], "level": "INFO"},
+    "loggers": {
+        "django.request": {
+            "handlers": ["console", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
 }
 
 # django-unfold admin theme

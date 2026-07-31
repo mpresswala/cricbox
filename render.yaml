@@ -15,6 +15,21 @@ services:
         value: /var/data
       - key: DJANGO_ALLOWED_HOSTS
         sync: false # set your custom domain(s) in the dashboard
+      # Error notifications — 500s email DJANGO_ADMIN_EMAIL with the full
+      # traceback. Fill these in on the Render dashboard; if DJANGO_EMAIL_HOST
+      # is left blank, error mail is just logged, not sent (site still works).
+      - key: DJANGO_ADMIN_EMAIL
+        sync: false # defaults to muffizone@gmail.com if unset
+      - key: DJANGO_EMAIL_HOST
+        sync: false # e.g. smtp.resend.com / smtp.sendgrid.net
+      - key: DJANGO_EMAIL_PORT
+        sync: false # defaults to 587
+      - key: DJANGO_EMAIL_HOST_USER
+        sync: false
+      - key: DJANGO_EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DJANGO_DEFAULT_FROM_EMAIL
+        sync: false # e.g. cricbox@yourdomain.com
       # Litestream continuous backup — set these to your S3/B2 bucket + keys.
       - key: LITESTREAM_BUCKET
         sync: false

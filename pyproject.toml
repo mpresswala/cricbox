@@ -22,12 +22,6 @@ dependencies = [
 Homepage = "https://github.com/muffizone/cricbox"
 Repository = "https://github.com/muffizone/cricbox"
 
-# Production database drivers. Installed only when needed:
-#   uv sync --extra mysql
-# Local development uses SQLite (cricbox.settings_local) and needs neither.
-[project.optional-dependencies]
-mysql = ["mysqlclient>=2.2", "mysql-connector-python>=9.0"]
-
 [dependency-groups]
 dev = ["ruff>=0.9"]
 
