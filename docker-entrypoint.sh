@@ -25,7 +25,16 @@ fi
 # Set it per-platform in fly.toml / render.yaml rather than hardcoding here,
 # since this entrypoint is shared by both. Each worker also gets 4 threads
 # so a slow request (slow query, stalled external call, etc.) doesn't block
-# every other visitor behind it. Requires --worker-class gthread — the
-# default sync worker ignores --threads entirely.
+# every other visitor behind it.
+#
+# Worker class is our TimeoutThreadWorker (cricbox/gunicorn_worker.py), a
+# thin subclass of gunicorn's own gthread worker. Vanilla gthread leaves
+# the response-write socket call unbounded, so a client whose connection
+# goes half-dead mid-response can pin a worker thread for minutes (kernel
+# TCP timeout) instead of seconds — with only 2 workers x 4 threads, a
+# handful of these stalls exhausts every thread and the app stops
+# responding to everyone. TimeoutThreadWorker puts an explicit timeout on
+# the socket before each request so a stalled write is dropped and the
+# thread freed instead. See gunicorn_worker.py for the full writeup.
 exec .venv/bin/gunicorn cricbox.wsgi:application --chdir cricbox --bind "0.0.0.0:${PORT:-8000}" \
-  --worker-class gthread --workers "${GUNICORN_WORKERS:-1}" --threads 4
+  --worker-class cricbox.gunicorn_worker.TimeoutThreadWorker --workers "${GUNICORN_WORKERS:-1}" --threads 4
