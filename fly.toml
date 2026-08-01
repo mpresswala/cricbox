@@ -12,11 +12,12 @@ console_command = '.venv/bin/python cricbox/manage.py shell'
 [env]
 DJANGO_SETTINGS_MODULE = 'cricbox.settings_fly'
 PORT = '8000'
-# 2 workers now that this app is on a shared-cpu-2x (2 vCPU) Machine — see
-# docker-entrypoint.sh, which reads this (default 1) rather than hardcoding
-# a worker count, since the same entrypoint also runs on Render's 0.5-CPU
-# Starter plan.
-GUNICORN_WORKERS = '2'
+# 2 workers — see docker-entrypoint.sh, which reads this (default 1)
+# rather than hardcoding a worker count, since the same entrypoint also
+# runs on Render's 0.5-CPU Starter plan. Machine is shared-cpu-6x below;
+# left at 2 workers for now even though there's more CPU allowance
+# available — bump this if the site still needs more headroom.
+GUNICORN_WORKERS = '3'
 
 [[mounts]]
 source = 'cricbox_data'
@@ -44,8 +45,16 @@ min_machines_running = 1
 # HealthCheckMiddleware are left in place in case this needs revisiting.
 
 [[vm]]
-size = 'shared-cpu-2x'
-memory = '1gb'
+# Bumped from shared-cpu-2x to shared-cpu-6x on 2026-08-02 after CPU burst
+# credits were repeatedly exhausted under load, triggering platform
+# throttling and the app becoming unresponsive (confirmed via Fly's
+# Instance Load/CPU metrics — utilization draining the credit balance,
+# then a throttle-driven iowait spike and hang). Still a shared/bursty
+# CPU tier under the hood (same credit-then-throttle model), just a much
+# larger allowance and baseline — not a switch to non-throttled dedicated
+# CPU (that would be a `performance-*` size instead).
+size = 'shared-cpu-4x'
+memory = '1.5gb'
 
 [[statics]]
 guest_path = '/app/cricbox/staticfiles'
