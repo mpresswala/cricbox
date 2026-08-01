@@ -16,4 +16,4 @@ dbs:
         # (confirmed by disabling replication entirely, which resolved it
         # immediately). 60s keeps off-machine backup coverage while cutting
         # replication I/O frequency by ~60x.
-        sync-interval: 1hr
+        sync-interval: 1h
