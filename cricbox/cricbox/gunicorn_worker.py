@@ -39,7 +39,7 @@ from gunicorn.workers.gthread import ThreadWorker
 # punish a genuinely slow (but alive) client on a big page/asset; short
 # enough that a handful of dead connections can't exhaust the thread pool.
 # Override with GUNICORN_RESPONSE_TIMEOUT if needed.
-RESPONSE_TIMEOUT = float(os.environ.get("GUNICORN_RESPONSE_TIMEOUT", "10"))
+RESPONSE_TIMEOUT = float(os.environ.get("GUNICORN_RESPONSE_TIMEOUT", "60"))
 
 
 class TimeoutThreadWorker(ThreadWorker):
