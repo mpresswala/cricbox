@@ -4,11 +4,14 @@ import django_tables2 as tables
 
 
 class PlayersTable(tables.Table):
-    batting = tables.TemplateColumn("Batting", verbose_name="", linkify=("batsman-stats", [tables.A("id")]))
+    batting = tables.TemplateColumn(
+        "Batting", verbose_name="", linkify=("batsman-stats", [tables.A("id")]), orderable=False
+    )
     bowling = tables.TemplateColumn(
         "Bowling",
         linkify=("bowling-stats-name", [tables.A("id")]),
         verbose_name="",
+        orderable=False,
     )
     member_since = tables.DateColumn(verbose_name="Joined")
     playing_role = tables.Column(verbose_name="Role")
