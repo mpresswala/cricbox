@@ -35,11 +35,20 @@ import os
 from gunicorn.workers.gthread import ThreadWorker
 
 # How long a single request's response write is allowed to stall before
-# the connection is dropped and the thread freed. Generous enough not to
-# punish a genuinely slow (but alive) client on a big page/asset; short
-# enough that a handful of dead connections can't exhaust the thread pool.
-# Override with GUNICORN_RESPONSE_TIMEOUT if needed.
-RESPONSE_TIMEOUT = float(os.environ.get("GUNICORN_RESPONSE_TIMEOUT", "60"))
+# the connection is dropped and the thread freed.
+#
+# NOTE on the value: tried 10s, then 60s in production, and connections
+# were still timing out even at 60s — a real client essentially never
+# takes 60+ seconds to receive a normal response, so what we're actually
+# seeing is connections that go fully dead mid-response (dropped wifi,
+# phone locked, tab closed), not slow-but-alive ones. A LONGER timeout
+# makes this worse, not better: each dead connection sits on a thread
+# longer, making it easier for all worker threads to be stuck
+# simultaneously — which is what then makes /healthz itself fail with
+# "awaiting headers", since no thread is free to even start handling it.
+# Shorter cycles dead connections out of the pool faster and keeps
+# capacity available. Override with GUNICORN_RESPONSE_TIMEOUT if needed.
+RESPONSE_TIMEOUT = float(os.environ.get("GUNICORN_RESPONSE_TIMEOUT", "15"))
 
 
 class TimeoutThreadWorker(ThreadWorker):

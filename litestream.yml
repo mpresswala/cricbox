@@ -10,3 +10,10 @@ dbs:
         path: cricbox
         endpoint: ${LITESTREAM_ENDPOINT}
         region: ${LITESTREAM_REGION}
+        # Default is 1s, which had Litestream reading the WAL and shipping
+        # to R2 continuously — on 2026-08-01 this coincided with sustained
+        # ~90% iowait on the Fly machine and took londonfields.net down
+        # (confirmed by disabling replication entirely, which resolved it
+        # immediately). 60s keeps off-machine backup coverage while cutting
+        # replication I/O frequency by ~60x.
+        sync-interval: 1hr
