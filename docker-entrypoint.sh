@@ -37,4 +37,4 @@ fi
 # the socket before each request so a stalled write is dropped and the
 # thread freed instead. See gunicorn_worker.py for the full writeup.
 exec .venv/bin/gunicorn cricbox.wsgi:application --chdir cricbox --bind "0.0.0.0:${PORT:-8000}" \
-  --worker-class cricbox.gunicorn_worker.TimeoutThreadWorker --workers "${GUNICORN_WORKERS:-1}" --threads 4
+  --worker-class cricbox.gunicorn_worker.TimeoutThreadWorker --workers "${GUNICORN_WORKERS:-1}" --threads 8

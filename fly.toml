@@ -10,39 +10,46 @@ console_command = '.venv/bin/python cricbox/manage.py shell'
 [build]
 
 [env]
-  DJANGO_SETTINGS_MODULE = 'cricbox.settings_fly'
-  PORT = '8000'
-  # 2 workers now that this app is on a shared-cpu-2x (2 vCPU) Machine — see
-  # docker-entrypoint.sh, which reads this (default 1) rather than hardcoding
-  # a worker count, since the same entrypoint also runs on Render's 0.5-CPU
-  # Starter plan.
-  GUNICORN_WORKERS = '2'
+DJANGO_SETTINGS_MODULE = 'cricbox.settings_fly'
+PORT = '8000'
+# 2 workers now that this app is on a shared-cpu-2x (2 vCPU) Machine — see
+# docker-entrypoint.sh, which reads this (default 1) rather than hardcoding
+# a worker count, since the same entrypoint also runs on Render's 0.5-CPU
+# Starter plan.
+GUNICORN_WORKERS = '2'
 
 [[mounts]]
-  source = 'cricbox_data'
-  destination = '/var/data'
+source = 'cricbox_data'
+destination = '/var/data'
 
 [http_service]
-  internal_port = 8000
-  force_https = true
-  auto_stop_machines = 'off'
-  auto_start_machines = true
-  min_machines_running = 1
+internal_port = 8000
+force_https = true
+auto_stop_machines = 'off'
+auto_start_machines = true
+min_machines_running = 1
 
-  [[http_service.checks]]
-    interval = '15s'
-    timeout = '5s'
-    grace_period = '30s'
-    method = 'GET'
-    path = '/healthz'
+[[http_service.checks]]
+# Fly has no "N consecutive failures" tolerance setting — a single
+# failed check pulls the Machine from routing (all traffic gets 503'd
+# until it passes again; confirmed 2026-08-01, ~44% of requests during
+# the incident were origin 503s from exactly this). timeout was 5s,
+# tight enough that a brief stall under thread-pool contention could
+# trip a false failure and 503 the whole site over a transient blip.
+# Widened so a check has to be genuinely stuck, not just briefly slow.
+interval = '40s'
+timeout = '20s'
+grace_period = '30s'
+method = 'GET'
+path = '/healthz'
 
-    [http_service.checks.headers]
-      X-Forwarded-Proto = 'https'
+[http_service.checks.headers]
+X-Forwarded-Proto = 'https'
 
 [[vm]]
-  size = 'shared-cpu-2x'
-  memory = '1gb'
+size = 'shared-cpu-2x'
+memory = '1gb'
 
 [[statics]]
-  guest_path = '/app/cricbox/staticfiles'
-  url_prefix = '/static/'
+guest_path = '/app/cricbox/staticfiles'
+url_prefix = '/static/'
