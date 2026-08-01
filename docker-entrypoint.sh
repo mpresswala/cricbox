@@ -41,4 +41,4 @@ fi
 # thread stuck in a blocking socket call. See gunicorn_worker.py (left in
 # place, just unused) for the full writeup if this needs revisiting.
 exec .venv/bin/gunicorn cricbox.wsgi:application --chdir cricbox --bind "0.0.0.0:${PORT:-8000}" \
-  --worker-class gthread --workers "${GUNICORN_WORKERS:-1}" --threads 8
+  --worker-class gthread --workers "${GUNICORN_WORKERS:-1}" --threads 4
