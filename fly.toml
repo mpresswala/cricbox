@@ -5,13 +5,18 @@
 
 app = 'cricbox'
 primary_region = 'lhr'
-console_command = '/code/manage.py shell'
+console_command = '.venv/bin/python cricbox/manage.py shell'
 
 [build]
 
 [env]
   DJANGO_SETTINGS_MODULE = 'cricbox.settings_fly'
   PORT = '8000'
+  # 2 workers now that this app is on a shared-cpu-2x (2 vCPU) Machine — see
+  # docker-entrypoint.sh, which reads this (default 1) rather than hardcoding
+  # a worker count, since the same entrypoint also runs on Render's 0.5-CPU
+  # Starter plan.
+  GUNICORN_WORKERS = '2'
 
 [[mounts]]
   source = 'cricbox_data'
@@ -39,5 +44,5 @@ console_command = '/code/manage.py shell'
   memory = '1gb'
 
 [[statics]]
-  guest_path = '/code/static'
+  guest_path = '/app/cricbox/staticfiles'
   url_prefix = '/static/'
