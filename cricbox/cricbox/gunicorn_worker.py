@@ -37,18 +37,23 @@ from gunicorn.workers.gthread import ThreadWorker
 # How long a single request's response write is allowed to stall before
 # the connection is dropped and the thread freed.
 #
-# NOTE on the value: tried 10s, then 60s in production, and connections
-# were still timing out even at 60s — a real client essentially never
-# takes 60+ seconds to receive a normal response, so what we're actually
-# seeing is connections that go fully dead mid-response (dropped wifi,
-# phone locked, tab closed), not slow-but-alive ones. A LONGER timeout
-# makes this worse, not better: each dead connection sits on a thread
-# longer, making it easier for all worker threads to be stuck
-# simultaneously — which is what then makes /healthz itself fail with
-# "awaiting headers", since no thread is free to even start handling it.
-# Shorter cycles dead connections out of the pool faster and keeps
-# capacity available. Override with GUNICORN_RESPONSE_TIMEOUT if needed.
-RESPONSE_TIMEOUT = float(os.environ.get("GUNICORN_RESPONSE_TIMEOUT", "15"))
+# Re-added 2026-08-02 after being removed for a day. History: tried 10s,
+# then 60s in production while a flood of connections from Cloudflare's
+# edge was the active problem — at that volume, longer timeouts made
+# things worse (dead connections sat on threads longer, making full
+# pool exhaustion easier), so it was tuned down to 15s and then removed
+# entirely once Cloudflare Shield cut the connection volume at the
+# source. It turned out Shield didn't cover every case: CPU burst-credit
+# throttling (see fly.toml [[vm]] comment) can also strand a thread —
+# a connection goes stale mid-write while the machine is throttled, and
+# with no timeout at all (plain gthread) that thread is gone forever,
+# even after CPU usage recovers, since nothing ever frees it. That
+# silent, permanent capacity loss is why the app stayed down even once
+# the CPU graph looked normal again. Set to 30s now: generous enough
+# that it won't punish a normal response on a bigger CPU allowance,
+# short enough to reclaim threads stranded by a throttling event
+# reasonably quickly. Override with GUNICORN_RESPONSE_TIMEOUT if needed.
+RESPONSE_TIMEOUT = float(os.environ.get("GUNICORN_RESPONSE_TIMEOUT", "30"))
 
 
 class TimeoutThreadWorker(ThreadWorker):
