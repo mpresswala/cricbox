@@ -23,22 +23,16 @@ fi
 
 # GUNICORN_WORKERS defaults to 1 (right for Render's 0.5-CPU Starter plan).
 # Set it per-platform in fly.toml / render.yaml rather than hardcoding here,
-# since this entrypoint is shared by both. Each worker also gets 8 threads
+# since this entrypoint is shared by both. Each worker also gets 4 threads
 # so a slow request (slow query, stalled external call, etc.) doesn't block
 # every other visitor behind it.
 #
-# Worker class reverted to plain gthread on 2026-08-01. We ran a custom
-# TimeoutThreadWorker (cricbox/gunicorn_worker.py) for a while, which puts
-# an explicit timeout on the response-write socket call — vanilla gthread
-# leaves that call unbounded, so a client whose connection goes half-dead
-# mid-response can pin a worker thread for minutes (kernel TCP timeout)
-# instead of seconds. The actual incident that day turned out to be a
-# flood of connections from Cloudflare's edge, not individual dead
-# clients; enabling Cloudflare Shield cut that connection volume at the
-# source, which made the timeout unnecessary. Trade-off if it's ever
-# turned back off: a single stalled write can once again hang a thread
-# indefinitely, since gunicorn's own --timeout watchdog can't detect a
-# thread stuck in a blocking socket call. See gunicorn_worker.py (left in
-# place, just unused) for the full writeup if this needs revisiting.
+# Worker class is our TimeoutThreadWorker (cricbox/gunicorn_worker.py) —
+# briefly reverted to plain gthread on 2026-08-01 after Cloudflare Shield
+# cut down a flood of edge connections that was the active problem that
+# day, but re-added 2026-08-02: CPU burst-credit throttling on the Fly
+# Machine can independently strand a thread on a connection that goes
+# stale mid-write, and plain gthread has no way to ever recover that
+# thread. See gunicorn_worker.py for the full history and reasoning.
 exec .venv/bin/gunicorn cricbox.wsgi:application --chdir cricbox --bind "0.0.0.0:${PORT:-8000}" \
-  --worker-class gthread --workers "${GUNICORN_WORKERS:-1}" --threads 4
+  --worker-class cricbox.gunicorn_worker.TimeoutThreadWorker --workers "${GUNICORN_WORKERS:-1}" --threads 4
