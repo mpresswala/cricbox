@@ -34,5 +34,16 @@ fi
 # Machine can independently strand a thread on a connection that goes
 # stale mid-write, and plain gthread has no way to ever recover that
 # thread. See gunicorn_worker.py for the full history and reasoning.
+#
+# --keep-alive 75: gunicorn's default is 2s, but requests arrive through
+# fly-proxy, which pools/reuses connections to the Machine and — per Fly
+# staff on the community forum — only closes an idle one after 60s of no
+# activity. With the 2s default, gunicorn was closing its end of a pooled
+# connection long before fly-proxy considered it stale, so fly-proxy would
+# periodically hand a "keep-alive" request to a connection gunicorn had
+# already torn down, stalling the write until TimeoutThreadWorker's 30s
+# guard (or, before that existed, nothing) killed it. 75s comfortably
+# outlasts fly-proxy's 60s so gunicorn is never the one to close first.
 exec .venv/bin/gunicorn cricbox.wsgi:application --chdir cricbox --bind "0.0.0.0:${PORT:-8000}" \
-  --worker-class cricbox.gunicorn_worker.TimeoutThreadWorker --workers "${GUNICORN_WORKERS:-1}" --threads 4
+  --worker-class cricbox.gunicorn_worker.TimeoutThreadWorker --workers "${GUNICORN_WORKERS:-1}" \
+  --threads 4 --keep-alive 75
