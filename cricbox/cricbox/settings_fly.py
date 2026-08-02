@@ -121,6 +121,16 @@ DATABASES = {
     }
 }
 
+# File-based so all GUNICORN_WORKERS processes share one cache (LocMemCache
+# would be per-process) and it survives worker restarts. Lives on the same
+# Fly Volume as the database, so no new infrastructure is needed.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": str(DATA_DIR / "cache"),
+    }
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
