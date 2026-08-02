@@ -19,11 +19,19 @@ from django.urls import path
 from django.views.decorators.cache import cache_page
 
 urlpatterns = [
-    path("", home, name="site-home"),
+    # Homepage: no querystring, no per-visitor content, and does real DB work
+    # (next fixture, latest result/report, season summary) on every hit —
+    # almost certainly the single highest-traffic URL on the site, so worth
+    # caching even though it isn't as expensive as the views below.
+    path("", cache_page(60 * 15)(home), name="site-home"),
+    # healthz deliberately NOT cached — it must always reflect current
+    # liveness, and it already does zero DB work (see home/views.py).
     path("healthz", healthz, name="healthz"),
-    path("about/", about, name="site-about"),
-    path("history/", history, name="site-history"),
-    path("links/", links, name="site-links"),
+    # Static content, no DB work at all (or close to it) — caching these
+    # saves negligible time but is harmless, so applied for consistency.
+    path("about/", cache_page(60 * 15)(about), name="site-about"),
+    path("history/", cache_page(60 * 15)(history), name="site-history"),
+    path("links/", cache_page(60 * 15)(links), name="site-links"),
     # The views cached below (positions, performers, records, results,
     # dismissals) share the same shape: no querystring/filter input, no
     # per-visitor content (no CSRF token, no login-state nav — checked
@@ -53,8 +61,14 @@ urlpatterns = [
     path("records/", cache_page(60 * 15)(RecordsView.as_view()), name="site-records"),
     path("results/", cache_page(60 * 15)(ClubRecordView.as_view()), name="site-results"),
     path("dismissals/", cache_page(60 * 15)(DismissalsView.as_view()), name="site-dismissals"),
-    path("handbook/", handbook, name="site-handbook"),
-    path("match-manager/", match_manager, name="site-match_manager"),
-    path("stats/", stats, name="site-stats"),
-    path("documents/", DocumentView.as_view(), name="site-documents"),
+    path("handbook/", cache_page(60 * 15)(handbook), name="site-handbook"),
+    path("match-manager/", cache_page(60 * 15)(match_manager), name="site-match_manager"),
+    path("stats/", cache_page(60 * 15)(stats), name="site-stats"),
+    # Unlike the batsman/bowler/match FilterViews excluded above, this one's
+    # underlying query (ClubDocument.objects.all()) is on a small table and
+    # cheap even uncached, and the realistic search space for the name
+    # filter is small (most visitors browse the unfiltered list rather than
+    # searching) — so the querystring-cardinality concern that ruled out
+    # caching the stats FilterViews doesn't really apply here.
+    path("documents/", cache_page(60 * 15)(DocumentView.as_view()), name="site-documents"),
 ]
