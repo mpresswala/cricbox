@@ -1,0 +1,110 @@
+name: Dependabot PR
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  validate:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Check formatting
+        id: format
+        continue-on-error: true
+        run: |
+          if uv run ruff format --check cricbox 2>&1; then
+            echo "status=pass" >> $GITHUB_OUTPUT
+          else
+            echo "status=fail" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Lint
+        id: lint
+        continue-on-error: true
+        run: |
+          if uv run ruff check cricbox 2>&1; then
+            echo "status=pass" >> $GITHUB_OUTPUT
+          else
+            echo "status=fail" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run tests
+        id: tests
+        continue-on-error: true
+        run: |
+          if DJANGO_SECRET_KEY=ci-test-key-not-used-in-production \
+             DJANGO_SETTINGS_MODULE=cricbox.settings_local \
+             uv run python cricbox/manage.py test batsman bowler home match match_statistics opposition player venue --verbosity=1 2>&1; then
+            echo "status=pass" >> $GITHUB_OUTPUT
+          else
+            echo "status=fail" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const formatStatus = ${{ steps.format.outputs.status == 'pass' }};
+            const lintStatus = ${{ steps.lint.outputs.status == 'pass' }};
+            const testStatus = ${{ steps.tests.outputs.status == 'pass' }};
+            const allPass = formatStatus && lintStatus && testStatus;
+
+            const pkg = context.payload.pull_request.title.match(/Bump (.+) from ([\d.]+) to ([\d.]+)/);
+            const summary = pkg
+              ? `**${pkg[1]}** ${pkg[2]} → ${pkg[3]}`
+              : context.payload.pull_request.title;
+
+            let body = `## Dependabot Validation Report\n\n`;
+            body += `| Check | Status |\n|---|---|\n`;
+            body += `| Ruff Format | ${formatStatus ? '✅ Pass' : '❌ Fail'} |\n`;
+            body += `| Ruff Lint   | ${lintStatus ? '✅ Pass' : '❌ Fail'} |\n`;
+            body += `| Django Tests (47) | ${testStatus ? '✅ Pass' : '❌ Fail'} |\n\n`;
+
+            if (allPass) {
+              body += `**✅ All checks passed — ready for staging deployment.**\n`;
+            } else {
+              body += `**❌ Some checks failed — review before merging.**\n`;
+            }
+
+            body += `\n---\n_🤖 Auto-validated by CI pipeline_`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+            if (allPass) {
+              await github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: ['staging-ready']
+              });
+            }
