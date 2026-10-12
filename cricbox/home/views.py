@@ -104,6 +104,18 @@ def home(request):
         "top_bat": _season_leader(Batsman, "runs", season),
         "top_bowl": _season_leader(Bowler, "wickets", season),
     }
+
+    # On this day in LFCC history
+    context["on_this_day"] = (
+        MatchStatistics.objects.filter(
+            match__date__month=today.month,
+            match__date__day=today.day,
+            match__date__year__lt=today.year,
+        )
+        .select_related("match__opposition", "match__venue", "result")
+        .order_by("-match__date")[:5]
+    )
+
     return render(request, "home/home.html", context)
 
 

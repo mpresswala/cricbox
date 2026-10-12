@@ -16,6 +16,8 @@ dependencies = [
     "django-unfold>=0.101.0",
     "gunicorn>=23.0",
     "whitenoise>=6.8",
+    "markdown>=3.7",
+    "Pillow>=11.0",
 ]
 
 [project.urls]

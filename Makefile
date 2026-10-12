@@ -8,4 +8,4 @@ lint:
 	uv run ruff check cricbox
 
 test:
-	DJANGO_SETTINGS_MODULE=cricbox.settings_local uv run python cricbox/manage.py test batsman.tests bowler.tests home.tests match.tests
+	DJANGO_SETTINGS_MODULE=cricbox.settings_local uv run python cricbox/manage.py test batsman bowler home match match_statistics opposition player venue --verbosity=1

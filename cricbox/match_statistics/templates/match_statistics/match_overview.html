@@ -1,5 +1,16 @@
 {% extends "home/base.html" %}
 {% load django_tables2 %}
+{% load home_extras %}
+{% block extra_head %}
+<meta property="og:title" content="London Fields CC vs {{ match_stats.match.opposition }} — {{ match_stats.match.date|date:'d M Y' }}">
+<meta property="og:description" content="{% if match_stats.result %}{{ match_stats.result }} — {% endif %}London Fields {{ match_stats.london_fields_score }}/{{ match_stats.london_fields_wickets }} vs {{ match_stats.match.opposition }} {{ match_stats.opposition_score }}/{{ match_stats.opposition_wickets }} at {{ match_stats.match.venue }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% url 'og-match-image' match_stats.id %}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="London Fields CC vs {{ match_stats.match.opposition }}">
+<meta name="twitter:description" content="{% if match_stats.result %}{{ match_stats.result }} — {% endif %}LF {{ match_stats.london_fields_score }}/{{ match_stats.london_fields_wickets }} vs {{ match_stats.match.opposition }} {{ match_stats.opposition_score }}/{{ match_stats.opposition_wickets }}">
+{% endblock %}
 {% block content %}
 <section class="page-header">
     <div class="container-page py-8">
@@ -15,7 +26,7 @@
         <h2 class="text-xl font-bold text-ink-900">{{ match_stats.report_headline }}</h2>
         {% if match_stats.report_byline %}<p class="mt-1 text-sm text-ink-500">{{ match_stats.report_byline }}</p>{% endif %}
         {% if match_stats.report_author %}<p class="text-sm text-ink-500">{{ match_stats.report_author }}</p>{% endif %}
-        <div class="content-prose mt-4">{{ match_stats.report | safe | linebreaks }}</div>
+        <div class="content-prose mt-4">{{ match_stats.report | markdownify }}</div>
     </article>
     {% endif %}
 
