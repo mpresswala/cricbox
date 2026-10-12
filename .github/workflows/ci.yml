@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, modernize-frontend]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Check formatting (ruff format)
+        run: uv run ruff format --check cricbox
+
+      - name: Lint (ruff check)
+        run: uv run ruff check cricbox
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Run tests
+        run: |
+          DJANGO_SECRET_KEY=ci-test-key-not-used-in-production \
+          DJANGO_SETTINGS_MODULE=cricbox.settings_local \
+          uv run python cricbox/manage.py test batsman bowler home match match_statistics opposition player venue --verbosity=2
