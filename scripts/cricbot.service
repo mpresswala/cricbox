@@ -1,0 +1,10 @@
+[Unit]
+Description=Cricbot — Dependabot PR staging deployment
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/bin/cricbot.py
+User=root
+Group=root
