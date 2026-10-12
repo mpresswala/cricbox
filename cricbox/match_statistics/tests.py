@@ -1,13 +1,57 @@
 from datetime import date
 
-from match.models import Match
+from match.models import HomeAway, Match, MatchType
 from opposition.models import Opposition
 from venue.models import Venue
 
-from .models import MatchStatistics
+from .models import MatchStatistics, Result
 
 from django.test import TestCase
 from django.urls import reverse
+
+
+class OgImageTests(TestCase):
+    """OG scorecard image generation."""
+
+    def setUp(self):
+        self.opposition = Opposition.objects.create(name="OG Test CC")
+        self.venue = Venue.objects.create(name="OG Ground")
+        self.home_away = HomeAway.objects.create(name="Home")
+        self.match_type = MatchType.objects.create(name="League")
+        self.won = Result.objects.create(name="Won")
+        match = Match.objects.create(
+            date=date(2025, 6, 15),
+            season=2025,
+            opposition=self.opposition,
+            venue=self.venue,
+            mtype=self.match_type,
+            home_or_away=self.home_away,
+        )
+        self.ms = MatchStatistics.objects.create(
+            match=match,
+            result=self.won,
+            london_fields_score=180,
+            london_fields_wickets=6,
+            london_fields_overs=35.4,
+            opposition_score=142,
+            opposition_wickets=8,
+            opposition_overs=32.0,
+            london_fields_first_event=0,
+        )
+
+    def test_og_image_returns_png(self):
+        response = self.client.get(reverse("og-match-image", args=[self.ms.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/png")
+
+    def test_og_image_has_reasonable_size(self):
+        response = self.client.get(reverse("og-match-image", args=[self.ms.id]))
+        # Should be at least 5KB for a 1200x630 PNG
+        self.assertGreater(len(response.content), 5000)
+
+    def test_og_image_404_for_missing_match(self):
+        response = self.client.get(reverse("og-match-image", args=[99999]))
+        self.assertEqual(response.status_code, 404)
 
 
 class SeasonOverviewAutocompleteFilterTests(TestCase):

@@ -1,5 +1,13 @@
-from django.test import TestCase
+from datetime import date
+
+from match.models import HomeAway, Match, MatchType
+from match_statistics.models import MatchStatistics, Result
+from opposition.models import Opposition
+from venue.models import Venue
+
+from django.test import TestCase, override_settings
 from django.urls import NoReverseMatch, reverse
+from django.utils import timezone
 
 # Smoke tests: every argument-free page should render without a server error.
 # These give a safety net for framework upgrades and the frontend reskin.
@@ -126,3 +134,99 @@ class ThemeTemplateRegressionTests(TestCase):
         self.assertContains(response, "border border-ink-700 bg-ink-800 p-2 text-white")
         self.assertContains(response, "xl:flex")
         self.assertContains(response, "xl:hidden")
+
+
+class MarkdownFilterTests(TestCase):
+    """home_extras templatetag: markdownify filter."""
+
+    def test_markdownify_renders_bold(self):
+        from home.templatetags.home_extras import markdownify
+        result = markdownify("**bold text**")
+        self.assertIn("<strong>bold text</strong>", result)
+
+    def test_markdownify_renders_headings(self):
+        from home.templatetags.home_extras import markdownify
+        result = markdownify("# Heading 1\n\n## Heading 2")
+        self.assertIn("<h1>Heading 1</h1>", result)
+        self.assertIn("<h2>Heading 2</h2>", result)
+
+    def test_markdownify_renders_code(self):
+        from home.templatetags.home_extras import markdownify
+        result = markdownify("Inline `code`")
+        self.assertIn("<code>code</code>", result)
+
+    def test_markdownify_renders_fenced_code_block(self):
+        from home.templatetags.home_extras import markdownify
+        result = markdownify("```\nprint('hello')\n```")
+        self.assertIn("print", result)
+        self.assertIn("code", result)
+
+    def test_markdownify_returns_empty_string_for_none(self):
+        from home.templatetags.home_extras import markdownify
+        self.assertEqual(markdownify(None), "")
+        self.assertEqual(markdownify(""), "")
+
+    def test_markdownify_renders_tables(self):
+        from home.templatetags.home_extras import markdownify
+        result = markdownify("| A | B |\n|---|---|\n| 1 | 2 |")
+        self.assertIn("<table>", result)
+        self.assertIn("<td>1</td>", result)
+
+
+@override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
+class OnThisDayTests(TestCase):
+    """Homepage 'On This Day' widget."""
+
+    def setUp(self):
+        self.opposition = Opposition.objects.create(name="Test CC")
+        self.venue = Venue.objects.create(name="Test Ground")
+        self.home_away = HomeAway.objects.create(name="Home")
+        self.match_type = MatchType.objects.create(name="Friendly")
+        self.won = Result.objects.create(name="Won")
+        self.today = timezone.now().date()
+
+    def _match(self, match_date):
+        match = Match.objects.create(
+            date=match_date,
+            season=match_date.year,
+            opposition=self.opposition,
+            venue=self.venue,
+            mtype=self.match_type,
+            home_or_away=self.home_away,
+        )
+        return MatchStatistics.objects.create(
+            match=match,
+            result=self.won,
+            london_fields_score=150,
+            london_fields_wickets=5,
+        )
+
+    def test_on_this_day_shows_historical_matches(self):
+        self._match(date(self.today.year - 1, self.today.month, self.today.day))
+
+        response = self.client.get(reverse("site-home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "On This Day in LFCC History")
+        self.assertContains(response, "Test CC")
+
+    def test_on_this_day_hides_when_no_matches(self):
+        response = self.client.get(reverse("site-home"))
+        self.assertNotContains(response, "On This Day in LFCC History")
+
+    def test_on_this_day_excludes_current_year(self):
+        self._match(self.today)
+
+        response = self.client.get(reverse("site-home"))
+        self.assertNotContains(response, "On This Day in LFCC History")
+
+    def test_on_this_day_uses_fixed_date(self):
+        """Use a fixed date to avoid today() dependency."""
+        ms = self._match(date(2025, 7, 15))
+        now = self.today
+        matches = type(ms).objects.filter(
+            match__date__month=7,
+            match__date__day=15,
+            match__date__year__lt=now.year,
+        )
+        self.assertEqual(matches.count(), 1)
