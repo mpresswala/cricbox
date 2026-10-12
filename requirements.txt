@@ -4,7 +4,7 @@ asgiref==3.12.1
     # via django
 beautifulsoup4==4.15.0
     # via django-bootstrap4
-django==6.0.7
+django==6.0.8
     # via
     #   cricbox
     #   django-bootstrap4
