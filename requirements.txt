@@ -23,7 +23,7 @@ gunicorn==26.0.0
     # via cricbox
 packaging==26.2
     # via gunicorn
-soupsieve==2.9.1
+soupsieve==4.0
     # via beautifulsoup4
 sqlparse==0.6.0
     # via django
